@@ -7,15 +7,24 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2018 Kurt Madel All Rights Reserved</copyright>
-    <lastBuildDate>Fri, 25 May 2018 12:49:15 -0400</lastBuildDate>
+    <lastBuildDate>Mon, 04 Jun 2018 23:09:15 -0400</lastBuildDate>
     
 	<atom:link href="https://kurtmadel.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Autoscaling</title>
+      <link>https://kurtmadel.com/tags/autoscaling/</link>
+      <pubDate>Mon, 04 Jun 2018 23:09:15 -0400</pubDate>
+      
+      <guid>https://kurtmadel.com/tags/autoscaling/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Cd</title>
       <link>https://kurtmadel.com/tags/cd/</link>
-      <pubDate>Fri, 25 May 2018 12:49:15 -0400</pubDate>
+      <pubDate>Mon, 04 Jun 2018 23:09:15 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/cd/</guid>
       <description></description>
@@ -24,7 +33,7 @@
     <item>
       <title>Ci</title>
       <link>https://kurtmadel.com/tags/ci/</link>
-      <pubDate>Fri, 25 May 2018 12:49:15 -0400</pubDate>
+      <pubDate>Mon, 04 Jun 2018 23:09:15 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/ci/</guid>
       <description></description>
@@ -33,7 +42,7 @@
     <item>
       <title>Jenkins</title>
       <link>https://kurtmadel.com/tags/jenkins/</link>
-      <pubDate>Fri, 25 May 2018 12:49:15 -0400</pubDate>
+      <pubDate>Mon, 04 Jun 2018 23:09:15 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/jenkins/</guid>
       <description></description>
@@ -42,7 +51,7 @@
     <item>
       <title>Kubernetes</title>
       <link>https://kurtmadel.com/tags/kubernetes/</link>
-      <pubDate>Fri, 25 May 2018 12:49:15 -0400</pubDate>
+      <pubDate>Mon, 04 Jun 2018 23:09:15 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/kubernetes/</guid>
       <description></description>
