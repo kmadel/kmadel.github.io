@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2018 Kurt Madel All Rights Reserved</copyright>
-    <lastBuildDate>Mon, 04 Jun 2018 23:09:15 -0400</lastBuildDate>
+    <lastBuildDate>Mon, 02 Jul 2018 08:23:00 -0400</lastBuildDate>
     
 	<atom:link href="https://kurtmadel.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Just-in-Time Autoscaling for Jenkins Agents with Kubernetes</title>
+      <link>https://kurtmadel.com/posts/cicd-with-kubernetes/just-in-time-autoscaling-for-jenkins-agents-with-kubernetes/</link>
+      <pubDate>Mon, 02 Jul 2018 08:23:00 -0400</pubDate>
+      
+      <guid>https://kurtmadel.com/posts/cicd-with-kubernetes/just-in-time-autoscaling-for-jenkins-agents-with-kubernetes/</guid>
+      <description>In Part 2 of the series CI/CD on Kubernetes we set up cluster autoscaling for a dedicated Jenkins agent node pool by utilizing the PodNodeSelector and LimitRanger admission controllers. In Part 3 of this CI/CD on Kubernetes series we will take advantage of another admission controller to scale-up the Jenkins agents node pool before a new request for a Jenkins agent pod requires the additional capacity. In other words, we want to initiate scaling-up of the Jenkins agent node pool before it is actually needed.</description>
+    </item>
     
     <item>
       <title>Autoscaling Jenkins Agents with Kubernetes</title>

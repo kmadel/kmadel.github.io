@@ -7,7 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2018 Kurt Madel All Rights Reserved</copyright>
-    <lastBuildDate>Mon, 04 Jun 2018 23:09:15 -0400</lastBuildDate>
+    <lastBuildDate>Mon, 02 Jul 2018 08:23:00 -0400</lastBuildDate>
     
 	<atom:link href="https://kurtmadel.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -15,7 +15,7 @@
     <item>
       <title>Autoscaling</title>
       <link>https://kurtmadel.com/tags/autoscaling/</link>
-      <pubDate>Mon, 04 Jun 2018 23:09:15 -0400</pubDate>
+      <pubDate>Mon, 02 Jul 2018 08:23:00 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/autoscaling/</guid>
       <description></description>
@@ -24,7 +24,7 @@
     <item>
       <title>Cd</title>
       <link>https://kurtmadel.com/tags/cd/</link>
-      <pubDate>Mon, 04 Jun 2018 23:09:15 -0400</pubDate>
+      <pubDate>Mon, 02 Jul 2018 08:23:00 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/cd/</guid>
       <description></description>
@@ -33,7 +33,7 @@
     <item>
       <title>Ci</title>
       <link>https://kurtmadel.com/tags/ci/</link>
-      <pubDate>Mon, 04 Jun 2018 23:09:15 -0400</pubDate>
+      <pubDate>Mon, 02 Jul 2018 08:23:00 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/ci/</guid>
       <description></description>
@@ -42,7 +42,7 @@
     <item>
       <title>Jenkins</title>
       <link>https://kurtmadel.com/tags/jenkins/</link>
-      <pubDate>Mon, 04 Jun 2018 23:09:15 -0400</pubDate>
+      <pubDate>Mon, 02 Jul 2018 08:23:00 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/jenkins/</guid>
       <description></description>
@@ -51,9 +51,18 @@
     <item>
       <title>Kubernetes</title>
       <link>https://kurtmadel.com/tags/kubernetes/</link>
-      <pubDate>Mon, 04 Jun 2018 23:09:15 -0400</pubDate>
+      <pubDate>Mon, 02 Jul 2018 08:23:00 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/kubernetes/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Priority</title>
+      <link>https://kurtmadel.com/tags/priority/</link>
+      <pubDate>Mon, 02 Jul 2018 08:23:00 -0400</pubDate>
+      
+      <guid>https://kurtmadel.com/tags/priority/</guid>
       <description></description>
     </item>
     

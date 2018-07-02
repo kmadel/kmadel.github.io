@@ -220,6 +220,8 @@ spec:
 
 <p>We will create two <code>node pools</code> - one for Jenkins masters and one for Jenkins agents.</p>
 
+<h6 id="jenkins-master-node-pool">Jenkins Master Node Pool</h6>
+
 <p>Create the <code>node pool</code> for Jenkins masters with <code>kops create ig jenkins-masters</code> and add <code>jenkinsType: master</code> as an additional <code>nodeLabel</code>. It should look similar to the following when you are done:</p>
 
 <pre><code class="language-yaml">apiVersion: kops/v1alpha2
@@ -242,7 +244,9 @@ spec:
   - us-east-1b
 </code></pre>
 
-<p>{#jenkins-agent-instance-group}Next we will create the <code>node pool</code> for Jenkins agents with <code>kops create ig jenkins-agents</code> and add <code>jenkinsType: agent</code> as an additional <code>nodeLabel</code>. It should look similar to the following when you are done:</p>
+<h6 id="jenkins-agent-instance-group">Jenkins Agent Node Pool</h6>
+
+<p>Next we will create the <code>node pool</code> for Jenkins agents with <code>kops create ig jenkins-agents</code> and add <code>jenkinsType: agent</code> as an additional <code>nodeLabel</code>. It should look similar to the following when you are done:</p>
 
 <pre><code class="language-yaml">apiVersion: kops/v1alpha2
 kind: InstanceGroup

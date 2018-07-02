@@ -133,15 +133,12 @@ spec:
   - type: Pod
     max:
       cpu: 3
-      memory: 12Gi
+      memory: 8Gi
   - type: Container
     max:
       cpu: 2
       memory: 4Gi
-    default:
-      cpu: 2
-      memory: 4Gi
-    defaultRequest:
+    min:
       cpu: 0.25
       memory: 500Mi
 </code></pre>
@@ -154,7 +151,7 @@ spec:
 
 <h2 id="why-autoscale-agents">Why Autoscale Agents</h2>
 
-<p>The <a href="https://github.com/jenkinsci/kubernetes-plugin">Jenkins Kubernetes Plugin</a> provides the capability to provision dynamic and ephemeral Jenkins agents as <code>Pods</code> managed by Kubernetes. And while very useful, that is not the same thing as autoscaling the actual physical resources or <code>nodes</code> where these <code>Pods</code> are running. Without true autoscaling, there will be a static amount of resources available for your Jenkins agents workload (and any other applications utilizing those same Kubernetes nodes); and when and if all of those resources are consumed - any additional Jenkins workload will be queued. Autoscaling the Jenkins agent capcity will help minimize queuing for expected or random spikes in a CI/CD workload - especially in a cloud environment like AWS, Azure, GCP, etc.</p>
+<p>The <a href="https://github.com/jenkinsci/kubernetes-plugin">Jenkins Kubernetes Plugin</a> provides the capability to provision dynamic and ephemeral Jenkins agents as <code>Pods</code> managed by Kubernetes. And while very useful, that is not the same thing as autoscaling the actual physical resources or <code>nodes</code> where these <code>Pods</code> are running. Without true autoscaling, there will be a static amount of resources available for your Jenkins agents workload (and any other applications utilizing those same Kubernetes nodes); and when and if all of those resources are consumed - any additional Jenkins workload will be queued. Autoscaling the Jenkins agent capacity will help minimize queuing for expected or random spikes in a CI/CD workload - especially in a cloud environment like AWS, Azure, GCP, etc.</p>
 
 <p>True autoscaling will allow your CI/CD to move as fast as it needs to - greatly reducing slow-downs related to lack of infrastructure. But of course you will still want to set maximum limits to avoid large costs due to a mis-configured jobs or other user error - even with a <code>LimitRange</code> for the autoscaled <code>namespace</code>. And remember, down-scaling is just as important as up-scaling - it is the down-scaling that will help manage costs by removing under utilized <code>nodes</code>, while the up-scaling accelerates your CI/CD. Autoscaling will help manage costs and while maximizing the availability of Jenkins agents.</p>
 
@@ -248,7 +245,7 @@ metadata:
 spec:
   image: kope.io/k8s-1.8-debian-stretch-amd64-hvm-ebs-2018-02-08
   machineType: m5.xlarge
-  maxSize: 2
+  maxSize: 1
   minSize: 10
   nodeLabels:
     jenkinsType: agents
