@@ -93,7 +93,6 @@ ga('send', 'pageview');
     
 </div>
 
-      
       <div class="content">
         
 
@@ -103,11 +102,11 @@ ga('send', 'pageview');
 <p><strong>NOTE:</strong> The configuration examples used in this series are from a Kubernetes cluster deployed in AWS using <a href="https://github.com/kubernetes/kops">Kubernetes Operations or kops</a> version <a href="https://github.com/kubernetes/kops/blob/master/docs/releases/1.9-NOTES.md">1.9</a> with <a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/">Kubernetes RBAC</a> enabled (which is the default authorization mode for kops 1.9). Therefore, certains steps and aspects of the configurations presented may be different for other Kuberenetes platforms.</p>
 </blockquote>
 
-<h2 id="why-segregate">Why Segregate</h2>
+<h2 id="why-segregate">Why Segregate<a href="#why-segregate" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
 
 <p>It is considered a best practice with Jenkins to have a <a href="https://jenkins.io/doc/book/architecting-for-scale/#distributed-builds-architecture">distributed workload</a> where the majority of your CI/CD workload is distributed across a pool of agents. Many CI/CD automation tools have a similar concept as Jenkins in distibuting much of the workload to <em>agents</em> running separately from the CI/CD server or <strong><em>master</em></strong> ; so this will most likely apply even if you aren&rsquo;t using Jenkins for CI/CD. Of course it is also considered a best practice to have multiple Jenkins masters for a large organization, but having multiple Jenkins agents is absolutely critical to long-term successful CI/CD for organizations of any size. Whereas a Jenkins master is typically a long-lived and stateful application - a pet if you will, we want Jenkins agents that are dynamic and ephemeral - cattle. Kubernetes is a perfect platform to manage your herd of agents - specifically with the <a href="https://github.com/jenkinsci/kubernetes-plugin">Jenkins Kubernetes plugin</a>, so we will not only have a pool of agents, but we will have a dynamic pool where agents are created on-demand and destroyed after they are used. However, we also want to ensure that this dynamic agent workload does not negatively impact our Jenkins masters. We will accomplish that by segregating the two workloads. Kubernetes provides a number of capabilities that will allow us to achieve this segregation.</p>
 
-<h2 id="namespaces-and-node-pools">Namespaces and Node Pools</h2>
+<h2 id="namespaces-and-node-pools">Namespaces and Node Pools<a href="#namespaces-and-node-pools" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
 
 <p>Kubernetes provides <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/"><code>Namespaces</code></a> to allow the segregation of  Kubernetes objects within the same cluster. Additionally, many Kubernetes solutions have a concept of <code>node pools</code>. A <code>node pool</code> is a group of Kubernetes <code>nodes</code> with the same characteristics - such as the same instance type. Kops refers to <code>node pools</code> as <a href="https://github.com/kubernetes/kops/blob/master/docs/instance_groups.md"><code>InstanceGroups</code></a> and for AWS they are backed by AWS Autoscaling Groups (ASG) where all the <code>nodes</code> in an <code>InstanceGroup</code> would be of the same EC2 instance type in addition to other defined characteristics. Kops provides the ability to create as many <code>node pools</code> (or <code>InstanceGroups</code>) as makes sense for your cluster - as does the Google Kubernetes Engine (GKE). To acheieve the segregation between Jenkins masters and agents, we are going to create separate <code>Namespaces</code> and <code>node pools</code> that are individually specific to Jenkins masters and agents. This will result in all Jenkins agent <code>Pods</code> being on agent dedicated <code>nodes</code> and being isolated from <code>nodes</code> with Jenkins masters or other workloads on your Kubernetes cluster.</p>
 
@@ -130,7 +129,7 @@ ga('send', 'pageview');
 <p><strong>NOTE:</strong> As of the date of this post, the Azure Kubernetes Service (AKS) does not support multiple node pools - <a href="https://github.com/Azure/AKS/issues/287">per this GitHub issue it is on their roadmap</a>.</p>
 </blockquote>
 
-<h2 id="configure-kops-admission-controllers">Kubernetes Admission Controllers</h2>
+<h2 id="configure-kops-admission-controllers">Kubernetes Admission Controllers<a href="#configure-kops-admission-controllers" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
 
 <p>To achieve segregation for the Jenkins agent workload to a specific <code>node pool</code>/<code>InstanceGroup</code>, we turn to <a href="https://kubernetes.io/docs/admin/admission-controllers/#what-are-they">Kubernetes Admission Controllers</a>. Even if you don’t know what the Kubernetes Admission Controllers are or do, chances are that you have benefited from them if you have ever interacted with a Kubernetes cluster. For example, if you use a default <code>StorageClass</code> or a <code>ServiceAccount</code> then you are depending on an Admission Controller. In this case, we are going to utilize the <a href="https://kubernetes.io/docs/admin/admission-controllers/#podnodeselector"><code>PodNodeSelector</code> Admisssion Controller</a>. But first, we have to enable it for our cluster. For the version of kops used for this post - <code>1.9.3</code> - the following Admission Controllers are enabled by default (as you can see in the code for kops 1.9 <a href="https://github.com/kubernetes/kops/blob/release-1.9/pkg/model/components/apiserver.go#L227">here</a> that is based on a <a href="https://kubernetes.io/docs/admin/admission-controllers/#is-there-a-recommended-set-of-admission-controllers-to-use">recommended set of admission controllers</a>):</p>
 
@@ -212,15 +211,15 @@ spec:
 <p><strong>NOTE:</strong> If you are enabling additional admission controllers on a new cluster you should do it before you apply the configuration or a rolling-update of all of your cluster nodes will be required.</p>
 </blockquote>
 
-<h2 id="putting-it-all-together">Putting It All Together</h2>
+<h2 id="putting-it-all-together">Putting It All Together<a href="#putting-it-all-together" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
 
 <p>So now that we have the <code>PodNodeSelector</code> admission controller enabled we can create the <code>node pools</code> and <code>namespaces</code>.</p>
 
-<h4 id="node-pools">Node Pools</h4>
+<h4 id="node-pools">Node Pools<a href="#node-pools" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
 
 <p>We will create two <code>node pools</code> - one for Jenkins masters and one for Jenkins agents.</p>
 
-<h6 id="jenkins-master-node-pool">Jenkins Master Node Pool</h6>
+<h6 id="jenkins-master-node-pool">Jenkins Master Node Pool<a href="#jenkins-master-node-pool" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h6>
 
 <p>Create the <code>node pool</code> for Jenkins masters with <code>kops create ig jenkins-masters</code> and add <code>jenkinsType: master</code> as an additional <code>nodeLabel</code>. It should look similar to the following when you are done:</p>
 
@@ -244,7 +243,7 @@ spec:
   - us-east-1b
 </code></pre>
 
-<h6 id="jenkins-agent-instance-group">Jenkins Agent Node Pool</h6>
+<h6 id="jenkins-agent-instance-group">Jenkins Agent Node Pool<a href="#jenkins-agent-instance-group" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h6>
 
 <p>Next we will create the <code>node pool</code> for Jenkins agents with <code>kops create ig jenkins-agents</code> and add <code>jenkinsType: agent</code> as an additional <code>nodeLabel</code>. It should look similar to the following when you are done:</p>
 
@@ -270,7 +269,7 @@ spec:
 
 <p>And because we are using kops <code>InstanceGroups</code> - any time we add additional nodes to either <code>node pool</code> it will automatically have the <code>jenkinsType</code> <code>node label</code> applied.</p>
 
-<h4 id="namespace">Namespace</h4>
+<h4 id="namespace">Namespace<a href="#namespace" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
 
 <p>Next we will create two <code>namespaces</code>. Again, one for Jenkins masters and one for Jenkins agents.</p>
 
@@ -300,7 +299,7 @@ metadata:
 <p><strong>NOTE:</strong> The <code>PodNodeSelector</code> also has a file based configuration that allows you to not only specficy default <code>NodeSelector</code> labels for specific <code>namespaces</code> but also allows specifying a <code>clusterDefaultNodeSelector</code>. However, I have not yet figured out how to use this file based configuration with kops - so if you have any ideas on this, please comment below. There is a <a href="https://github.com/kubernetes/kops/issues/5170">GitHub issue tracking this</a>.</p>
 </blockquote>
 
-<h2 id="jenkins-kubernetes-plugin-configuration">Jenkins Kubernetes Plugin Configuration</h2>
+<h2 id="jenkins-kubernetes-plugin-configuration">Jenkins Kubernetes Plugin Configuration<a href="#jenkins-kubernetes-plugin-configuration" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
 
 <p>So now that we have <code>node pools</code> and <code>namespaces</code> for our Jenkins masters and agents we need to configure the Kubernetes plugin to use the <code>jenkins-agents</code> <code>namespace</code>. To start with, we must create a <code>ServiceAccount</code> in the <code>jenkins-masters</code> <code>namespace</code> as the requests for new dyanmic agent <code>pods</code> will be initiated by our Jenkins master running in the same Kubernetes cluster. For clarity, I will specify the <code>namespace</code> in the configuration and will use the <code>ServiceAccount</code> name <code>jenkins</code>.</p>
 
@@ -350,8 +349,7 @@ subjects:
 
 <p>In the <a href="https://kurtmadel.com/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/">next post</a> of the series <a href="/series/cicd-on-kubernetes/">CI/CD on Kubernetes</a> we will explore autoscaling for the Jenkins agent workload.</p>
 
-      </div>
-    </div>
+      </div></div>
   </section>
 
   
