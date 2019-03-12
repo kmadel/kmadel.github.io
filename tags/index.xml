@@ -33,7 +33,7 @@
     <item>
       <title>Cd</title>
       <link>https://kurtmadel.com/tags/cd/</link>
-      <pubDate>Tue, 12 Mar 2019 17:36:15 -0400</pubDate>
+      <pubDate>Mon, 02 Jul 2018 07:23:00 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/cd/</guid>
       <description></description>
@@ -42,7 +42,7 @@
     <item>
       <title>Ci</title>
       <link>https://kurtmadel.com/tags/ci/</link>
-      <pubDate>Tue, 12 Mar 2019 17:36:15 -0400</pubDate>
+      <pubDate>Mon, 02 Jul 2018 07:23:00 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/ci/</guid>
       <description></description>
@@ -69,18 +69,9 @@
     <item>
       <title>Jenkins</title>
       <link>https://kurtmadel.com/tags/jenkins/</link>
-      <pubDate>Tue, 12 Mar 2019 17:36:15 -0400</pubDate>
+      <pubDate>Mon, 02 Jul 2018 07:23:00 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/jenkins/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Jenkins X</title>
-      <link>https://kurtmadel.com/tags/jenkins-x/</link>
-      <pubDate>Tue, 12 Mar 2019 17:36:15 -0400</pubDate>
-      
-      <guid>https://kurtmadel.com/tags/jenkins-x/</guid>
       <description></description>
     </item>
     
@@ -96,7 +87,7 @@
     <item>
       <title>Kubernetes</title>
       <link>https://kurtmadel.com/tags/kubernetes/</link>
-      <pubDate>Tue, 12 Mar 2019 17:36:15 -0400</pubDate>
+      <pubDate>Mon, 02 Jul 2018 07:23:00 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/kubernetes/</guid>
       <description></description>
@@ -144,24 +135,6 @@
       <pubDate>Sun, 16 Dec 2018 12:03:15 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/religous-faith/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Serverless</title>
-      <link>https://kurtmadel.com/tags/serverless/</link>
-      <pubDate>Tue, 12 Mar 2019 17:36:15 -0400</pubDate>
-      
-      <guid>https://kurtmadel.com/tags/serverless/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Tekton</title>
-      <link>https://kurtmadel.com/tags/tekton/</link>
-      <pubDate>Tue, 12 Mar 2019 17:36:15 -0400</pubDate>
-      
-      <guid>https://kurtmadel.com/tags/tekton/</guid>
       <description></description>
     </item>
     
