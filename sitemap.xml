@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://kurtmadel.com/posts/cicd-with-kubernetes/jenkins-is-dead-taking-the-jenkins-out-of-jenkins-x/</loc>
+    <lastmod>2019-03-12T17:36:15-04:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://kurtmadel.com/posts/incoherent-thoughts-of-a-young-marine/9-11-93/</loc>
     <lastmod>2019-01-21T22:45:15-04:00</lastmod>
   </url>
@@ -46,7 +51,7 @@
   
   <url>
     <loc>https://kurtmadel.com/series/cicd-on-kubernetes/</loc>
-    <lastmod>2018-07-02T07:23:00-04:00</lastmod>
+    <lastmod>2019-03-12T17:36:15-04:00</lastmod>
   </url>
   
   <url>
@@ -56,13 +61,13 @@
   
   <url>
     <loc>https://kurtmadel.com/tags/cd/</loc>
-    <lastmod>2018-07-02T07:23:00-04:00</lastmod>
+    <lastmod>2019-03-12T17:36:15-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://kurtmadel.com/tags/ci/</loc>
-    <lastmod>2018-07-02T07:23:00-04:00</lastmod>
+    <lastmod>2019-03-12T17:36:15-04:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -85,7 +90,13 @@
   
   <url>
     <loc>https://kurtmadel.com/tags/jenkins/</loc>
-    <lastmod>2018-07-02T07:23:00-04:00</lastmod>
+    <lastmod>2019-03-12T17:36:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/jenkins-x/</loc>
+    <lastmod>2019-03-12T17:36:15-04:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -97,13 +108,13 @@
   
   <url>
     <loc>https://kurtmadel.com/tags/kubernetes/</loc>
-    <lastmod>2018-07-02T07:23:00-04:00</lastmod>
+    <lastmod>2019-03-12T17:36:15-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://kurtmadel.com/</loc>
-    <lastmod>2019-01-21T22:45:15-04:00</lastmod>
+    <lastmod>2019-03-12T17:36:15-04:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -121,7 +132,7 @@
   
   <url>
     <loc>https://kurtmadel.com/posts/</loc>
-    <lastmod>2019-01-21T22:45:15-04:00</lastmod>
+    <lastmod>2019-03-12T17:36:15-04:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -145,13 +156,25 @@
   
   <url>
     <loc>https://kurtmadel.com/series/</loc>
-    <lastmod>2018-07-02T07:23:00-04:00</lastmod>
+    <lastmod>2019-03-12T17:36:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/serverless/</loc>
+    <lastmod>2019-03-12T17:36:15-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://kurtmadel.com/tags/</loc>
     <lastmod>2018-07-02T07:23:00-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/tekton/</loc>
+    <lastmod>2019-03-12T17:36:15-04:00</lastmod>
     <priority>0</priority>
   </url>
   

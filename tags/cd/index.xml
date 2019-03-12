@@ -7,10 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2018 Kurt Madel All Rights Reserved</copyright>
-    <lastBuildDate>Mon, 02 Jul 2018 07:23:00 -0400</lastBuildDate>
+    <lastBuildDate>Tue, 12 Mar 2019 17:36:15 -0400</lastBuildDate>
     
 	<atom:link href="https://kurtmadel.com/tags/cd/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Jenkins is Dead - Taking the Jenkins Out of Jenkins X</title>
+      <link>https://kurtmadel.com/posts/cicd-with-kubernetes/jenkins-is-dead-taking-the-jenkins-out-of-jenkins-x/</link>
+      <pubDate>Tue, 12 Mar 2019 17:36:15 -0400</pubDate>
+      
+      <guid>https://kurtmadel.com/posts/cicd-with-kubernetes/jenkins-is-dead-taking-the-jenkins-out-of-jenkins-x/</guid>
+      <description>The importance of Continuous Delivery (CD) has accelerated rapidly over the last several years. The recent launch of the Continuous Delivery Foundation is definitely a sign of the continuing growth and significance of CD across enterprise IT and cloud computing. Not only has Jenkins been a very important part of this growth, it is one of the initial projects of the Continuous Delivery Foundation.
+So why then is Jenkins dead?</description>
+    </item>
     
     <item>
       <title>Just-in-Time Autoscaling for Jenkins Agents with Kubernetes</title>
