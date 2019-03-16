@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-119704356-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="" name="keywords">
+<meta content="Tekton: Standardizing Native Kubernetes Continuous Delivery - Kurt Madel" property="og:title">
+<title>Tekton: Standardizing Native Kubernetes Continuous Delivery | Kurt Madel</title>
+<link rel="stylesheet" href="https://kurtmadel.com/css/style.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" integrity="sha256-Zd1icfZ72UBmsId/mUcagrmN7IN5Qkrvh75ICHIQVTk=" crossorigin="anonymous" />
+
+<link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+</head>
+
+<body>
+  <section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://kurtmadel.com/"><h1 class="title is-4">Kurt Madel</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://www.linkedin.com/in/kurt-madel-2304a6a/">
+            <span class="icon">
+              <i class="fa fa-linkedin"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://github.com/kmadel">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/kmadel">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+    <h2 class="subtitle">Random thoughts on technology and other stuff...</h2>
+  </div>
+</section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="subtitle is-6">March 15, 2019</h2>
+      <h2 class="subtitle"><a href="/series/cicd-on-kubernetes">CICD on Kubernetes</a> </h2>
+      <h1 class="title">Tekton: Standardizing Native Kubernetes Continuous Delivery</h1>
+      
+      <div class="tags">
+    
+        <a class="button is-link" href="/tags/cdf">CDF</a>
+    
+        <a class="button is-link" href="/tags/ci">CI</a>
+    
+        <a class="button is-link" href="/tags/cd">CD</a>
+    
+        <a class="button is-link" href="/tags/tekton">Tekton</a>
+    
+        <a class="button is-link" href="/tags/kubernetes">Kubernetes</a>
+    
+</div>
+
+      <div class="content">
+        
+
+<p>Perhaps the most exciting project that was announced as one of the four initial Continuous Delivery Foundation (CDF) projects is <a href="https://github.com/tektoncd/pipeline/blob/master/README.md">Tekton Pipelines</a>, which in the vein of the Kubernetes ecosystem naming conventions is from the Ancient Greek word for carpenter. It is also the youngest of the four initial CDF projects. Surrounded by industry stalwarts with Jenkins on one side and Spinnaker the other - and then there is the upstart Jenkins X that is just over a year old, but seems much much older in <em>tech years</em> compared to Tekton.</p>
+
+<h2 id="where-did-tekton-come-from">Where did Tekton come from?<a href="#where-did-tekton-come-from" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
+
+<p>Tekton Pipelines <a href="https://github.com/tektoncd/pipeline">lives on GitHub</a> as do so many important open source projects. The <a href="https://github.com/tektoncd">tektoncd GitHub Organization</a> didn&rsquo;t even exist a week before this post and its website at <a href="https://tekton.dev">https://tekton.dev</a> was still under construction at the time of this post - that&rsquo;s how new Tekton is. Before last week, Tekton lived in the <a href="https://github.com/knative/build-pipeline"><strong><em>build-pipeline</em></strong> repository</a> under the <a href="https://github.com/knative">Knative GitHub Organization</a> and is built on the work of <a href="https://github.com/knative/build">Knative build</a>. It went from being called <strong>build pipeline</strong> to <strong>Pipeline CRD</strong> and now finally to <strong>Tekton Pipelines</strong> in a mattter of a few months. Google announced <a href="https://cloudplatform.googleblog.com/2018/07/bringing-the-best-of-serverless-to-you.html">Knative at Google Next last July</a> to include <strong>Knative Build</strong> - a rudimentary native Kubernetes framework initially created for building the container images to be deployed as Knative serverless applications. However, a number of different Kubernetes tools quickly latched onto Knative build as a more general framework for native Kubernetes CD - even though this wasn&rsquo;t the original intent. So Knative build-pipeline (now Tekton) was born to provide an open, full-featured and standardized native Kubernetes CD solution - where Knative Build was not. Tekton&rsquo;s heritage is still visible in the location of the first release, <a href="https://github.com/tektoncd/pipeline/releases/tag/v0.1.0">v0.1.0</a>, was actually released to <a href="https://storage.googleapis.com/knative-releases/build-pipeline/latest/release.yaml">https://storage.googleapis.com/knative-releases/build-pipeline/latest/release.yaml</a> - I would expect future releases to be released under <em>tektoncd-releases</em> or something of the like.</p>
+
+<h2 id="what-is-tekton">What is Tekton?<a href="#what-is-tekton" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
+
+<p>Tekton provides native Kubernetes resources for building and executing CD pipelines. But what does that mean exactly?</p>
+
+<p>Well first, Tekton provides <a href="https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/">Kubernetes Custom Resource Definitions (CRD)</a> for modelling CD pipelines. This is where the open standardization of CD on Kubernetes begins in my opinion. The CRDs provided by Tekton include:</p>
+
+<ul>
+<li><a href="https://github.com/tektoncd/pipeline/blob/master/config/300-task.yaml">Task</a> - A Tekton pipeline will always include one or more <a href="https://github.com/tektoncd/pipeline/blob/master/docs/tasks.md">Tasks</a> with a Task consisting of one or more <a href="https://github.com/tektoncd/pipeline/blob/master/docs/tasks.md#steps">steps</a>. Each step, which is an <a href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">Init Container</a> (but will soon be just a plain vanilla K8s container spec as discussed below), is run sequentially with the source being to be built mounted into <code>/workspace</code>. If you don&rsquo;t specify a <code>command</code> for a <code>step</code> then the default <code>image</code> entrypoint will be used.</li>
+<li><a href="https://github.com/tektoncd/pipeline/blob/master/config/300-taskrun.yaml">TaskRun</a> - A TaskRun will be auto-created by a PipelineRun for each Task in a Pipeline, but a TaskRun can also be manually created and used if you want to run a Task outside of a Pipeline.</li>
+<li><a href="https://github.com/tektoncd/pipeline/blob/master/config/300-pipeline.yaml">Pipeline</a> - A <a href="https://github.com/tektoncd/pipeline/blob/master/docs/pipelines.md">Pipeline</a> is a collection of PipelineResources, <a href="https://github.com/tektoncd/pipeline/blob/master/docs/pipelines.md#parameters">Parameters</a> and one or more Tasks.</li>
+<li><a href="https://github.com/tektoncd/pipeline/blob/master/config/300-pipelinerun.yaml">PipelineRun</a> - A <a href="https://github.com/tektoncd/pipeline/blob/master/docs/pipelineruns.md">PipelineRun</a> is used to run a Pipeline and the creation of a PipelineRun will trigger the creation of a TaskRun for each Task in the Pipeline being run.</li>
+<li><a href="https://github.com/tektoncd/pipeline/blob/master/config/300-resource.yaml">PipelineResource</a> - <a href="https://github.com/tektoncd/pipeline/blob/master/docs/resources.md">PipelineResources</a> provide input and output to a Pipeline&rsquo;s subsequents Tasks - with an input perhaps being a Git repository and an output being a container image built from that Git repository. Other resources include the <a href="https://github.com/tektoncd/pipeline/blob/master/docs/resources.md#cluster-resource">cluster resources</a> - could be used to deploy to other clusters, and <a href="https://github.com/tektoncd/pipeline/blob/master/docs/resources.md#storage-resource">storage resources</a>.</li>
+</ul>
+
+<p>Secondly, Tekton provides an <em>engine</em>, the <a href="https://github.com/tektoncd/pipeline/blob/master/config/controller.yaml">tekton-pipelines-controller</a>, to execute the modelled pipelines. Steps in a given Task will be executed sequentially and Tasks in a pipeline are also currently executed sequentially in the order they are declared in the Pipeline - although the ability to execute Tasks in parallel is coming soon - as discussed below.</p>
+
+<h2 id="why-is-tekton-important">Why is Tekton important?<a href="#why-is-tekton-important" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
+
+<p>As part of the Continuous Delivery Foundation, Tekton is positioned to be the first open standard for defining native Kubernetes CD pipelines, and actually the first open standard for defining CD pipelines on any platform. Just as Kubernetes allows you to have container orchestration in a cloud agnostic way, Tekton will allow you to have CD-pipelines-as-code that aren&rsquo;t locked into any particular flavor of Kubernetes or Cloud provider, and can be adopted by other CD tools as a standardized engine for executing pipelines. Of course a Tekton Pipeline will only run on Kubernetes - but where else would you want to run your CD Pipelines?</p>
+
+<h2 id="what-s-next">What&rsquo;s next?<a href="#what-s-next" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
+
+<p>Tekton is not yet <em>full-featured</em>, but it is showing a lot of promise already. Remember, this is only <a href="https://github.com/tektoncd/pipeline/releases/tag/v0.1.0">v0.1.0</a>. There are a number of important features on the roadmap for Tekton. Two important features targeted for v0.2.0 is to allow Tasks within a Pipeline to run in parallel and to allow execution of steps in regular pod containers instead of Init Containers.</p>
+
+<ul>
+<li><a href="https://github.com/tektoncd/pipeline/pull/473">The Directed Acyclic Graph (DAG) execution capability that was merged on March 1st</a> provides the ability to execute tasks in parallel. DAG execution also allows Pipeline Tasks to be connected so that one may run before another and so that Pipeline execution cannot be caught in an infinite loop. Note that the DAG execution doesn&rsquo;t yet support the ability to set a maximum number of parallel Tasks - so you may want to watch out for that on clusters where you are sharing resoures with other workloads.</li>
+<li>One implementation detail that Tekton inherited from Knative build is the use of Init Containers as a way of executing steps sequentially. However, Init Containers don&rsquo;t provide native Kubernetes log persistence, the use of side-car containers, parallelization of steps or intergrate with third party logging or metrics. By <a href="https://github.com/tektoncd/pipeline/pull/564">creating a custom waiting entrypoint</a> that overrides and then executes each steps specified (or default) entrypoint, v0.2.0 of Tekton will allow using regular pod containers and provide the benefits mentioned above.</li>
+</ul>
+
+<p>Other features being designed and on the <a href="https://github.com/tektoncd/pipeline/blob/master/roadmap-2019.md">2019 roadmap</a> include:</p>
+
+<ul>
+<li><a href="https://github.com/tektoncd/pipeline/issues/27">Conditional execution</a>: Run a task based on the value of a pipeline parameter, in response to the failure of another task, or other condition.</li>
+<li><a href="https://github.com/tektoncd/pipeline/issues/49">Notifications</a>: Add built-in suppport for Slack, email and GitHub PR commenting with the ability to perform different actions based on the outcome of a Pipeline - like success vs failure.</li>
+<li><a href="https://github.com/tektoncd/pipeline/issues/233">Paused task execution</a>: Allow a task to be configured to pause execution until a certain condition is met. This would enable features such as pausing for manual approval before a Task is executed.</li>
+<li><a href="https://github.com/tektoncd/pipeline/issues/50">Pipeline Task Restart</a>: The abitliy to resume a Pipeline at a specific step or Task.</li>
+<li><a href="https://github.com/tektoncd/pipeline/issues/221">Retries</a>: Allow specifying the number of times to retry when a Task fails.</li>
+<li><a href="https://github.com/tektoncd/pipeline/issues/238">Pipeline Extensibility</a>: Allow custom resources, <a href="https://github.com/tektoncd/pipeline/issues/215">custom Task implementations</a> and custom logic inside of a Task.</li>
+<li><a href="https://github.com/tektoncd/pipeline/blob/master/roadmap-2019.md#triggering">Triggers</a>: The ability to kick-off a Tekton Pipeline based on an event such as a GitHub webhook. Currently a Tekton Pipeline (or Task) must be initiated manually by applying a PipelineRun (or a TaskRun).</li>
+<li><a href="https://github.com/tektoncd/pipeline/blob/master/roadmap-2019.md#community-library">Better Examples</a>: Provide numerous in-depth examples on key CD use cases and a community where it is easy to share such examples.</li>
+</ul>
+
+<p>Looking forward to v0.2.0 and beyond!</p>
+
+      </div></div>
+  </section>
+
+  
+<section class="section">
+  <div class="container">
+    <aside><div id="disqus_thread"></div></aside>
+    <script type="text/javascript">
+      var disqus_shortname = 'kurtmadel-com';
+      (function() {
+        
+        if (window.location.hostname == "localhost")
+            return;
+        
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+      <section class="section">
+      <div class="container has-text-centered">
+        <p>© 2018 Kurt Madel All Rights Reserved</p>
+      </div>
+    </section>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>
+
