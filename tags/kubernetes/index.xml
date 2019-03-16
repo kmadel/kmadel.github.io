@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2018 Kurt Madel All Rights Reserved</copyright>
-    <lastBuildDate>Mon, 02 Jul 2018 07:23:00 -0400</lastBuildDate>
+    <lastBuildDate>Fri, 15 Mar 2019 21:00:15 -0400</lastBuildDate>
     
 	<atom:link href="https://kurtmadel.com/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Tekton: Standardizing Native Kubernetes Continuous Delivery</title>
+      <link>https://kurtmadel.com/posts/cicd-with-kubernetes/tekton-standardizing-native-kubernetes-cd/</link>
+      <pubDate>Fri, 15 Mar 2019 21:00:15 -0400</pubDate>
+      
+      <guid>https://kurtmadel.com/posts/cicd-with-kubernetes/tekton-standardizing-native-kubernetes-cd/</guid>
+      <description>Perhaps the most exciting project that was announced as one of the four initial Continuous Delivery Foundation (CDF) projects is Tekton Pipelines, which in the vein of the Kubernetes ecosystem naming conventions is from the Ancient Greek word for carpenter. It is also the youngest of the four initial CDF projects. Surrounded by industry stalwarts with Jenkins on one side and Spinnaker the other - and then there is the upstart Jenkins X that is just over a year old, but seems much much older in tech years compared to Tekton.</description>
+    </item>
     
     <item>
       <title>Just-in-Time Autoscaling for Jenkins Agents with Kubernetes</title>
