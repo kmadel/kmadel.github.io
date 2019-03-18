@@ -95,6 +95,7 @@ ga('send', 'pageview');
     
 </div>
 
+      
       <div class="content">
         
 
@@ -261,8 +262,8 @@ spec:
 </blockquote>
 
 <p>One thing to keep in mind when autoscaling Jenkins agent workloads, specifically with a cloud provider like AWS, is that spinning up a new node/EC2 instance takes ~4 minutes on average - time jobs will be waiting in the Jenkins queue (in addition to the <a href="https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-fast-is-cluster-autoscaler">~10 seconds it takes the Cluster Autoscaler to decide to scale-up</a>). In the next post of the series <a href="/series/cicd-on-kubernetes/">CI/CD on Kubernetes</a> we will explore just-in-time  autoscaling for the Jenkins agent workload that I like to refer to as <strong><em>preemptive</em></strong> autoscaling. This will allow us to further minimize Jenkins job queueing due to unavailable agent capcity by scaling-up the Jenkins agent <code>node pool</code> just before we need additional capacity.</p>
-
-      </div></div>
+</div>
+    </div>
   </section>
 
   
