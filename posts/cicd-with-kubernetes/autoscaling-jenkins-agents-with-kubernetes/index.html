@@ -75,11 +75,12 @@ ga('send', 'pageview');
   </div>
 </section>
 
-  <section class="section">
+  <section class="section single">
     <div class="container">
       <h2 class="subtitle is-6">June 4, 2018</h2>
       <h2 class="subtitle"><a href="/series/cicd-on-kubernetes">CICD on Kubernetes</a>  Part 2</h2>
       <h1 class="title">Autoscaling Jenkins Agents with Kubernetes</h1>
+      
       
       <div class="tags">
     
@@ -97,7 +98,6 @@ ga('send', 'pageview');
 
       
       <div class="content">
-        
 
 <p>In <a href="https://kurtmadel.com/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/">Part 1</a> of the series <a href="/series/cicd-on-kubernetes/">CI/CD on Kubernetes</a> we used the <code>PodNodeSelector</code> admission controller to segregate the Jenkins workloads - agents from masters (and from any other workload running on the cluster). In Part 2 of this CI/CD on Kubernetes series we will utilize the segregated <code>jenkins-agents</code> <code>node pool</code> as part of an autoscaling solution for the Jenkins agent workload, without impacting the availability or performance of the Jenkins masters <code>node pool</code> or any other segregated workload on the cluster. But before diving into an autoscaling solution for Jenkins agents we will take a look at two ways to manage compute resources for containers with Kubernetes: <code>ResourceQuotas</code> and <code>LimitRanges</code>. Managing compute resources for the cluster will reduce the risk of a few rogue Jenkins jobs effecting the stability and availability of agent capacity, and ensure more predictable autoscaling. Because even though autoscaling compute resources for Jenkins agents is a terrific solution for flexibile and dynamic CI/CD capacity, there will always be a limits to how much up-scaling is possible - whether it is limits on cost or actual physical limitations of AWS itself.</p>
 
@@ -295,6 +295,9 @@ spec:
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
     
     <script>hljs.initHighlightingOnLoad();</script>
+    
+    
   </body>
 </html>
 
+ 

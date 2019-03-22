@@ -75,11 +75,12 @@ ga('send', 'pageview');
   </div>
 </section>
 
-  <section class="section">
+  <section class="section single">
     <div class="container">
       <h2 class="subtitle is-6">May 25, 2018</h2>
       <h2 class="subtitle"><a href="/series/cicd-on-kubernetes">CICD on Kubernetes</a>  Part 1</h2>
       <h1 class="title">Segregating Jenkins Agents on Kubernetes</h1>
+      
       
       <div class="tags">
     
@@ -95,7 +96,6 @@ ga('send', 'pageview');
 
       
       <div class="content">
-        
 
 <p>This is the first part in the series <a href="/series/cicd-on-kubernetes/">CI/CD on Kubernetes</a>. In this part we will explore the use of Kubernetes <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/"><code>Namespaces</code></a> and the Kubernetes <a href="https://kubernetes.io/docs/admin/admission-controllers/#podnodeselector"><code>PodNodeSelector</code></a> <a href="https://kubernetes.io/docs/admin/admission-controllers/">Admission Controller</a> to segregate Jenkins agent workloads from the Jenkins server (or master) workloads - as well as other workloads on the Kubernetes cluster. As we continue on with the series we will see why this will serve as an important foundation for managing Kubernetes configuration for Jenkins agent related features such as autoscaling, resource quotas and security constraints.</p>
 
@@ -382,6 +382,9 @@ subjects:
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
     
     <script>hljs.initHighlightingOnLoad();</script>
+    
+    
   </body>
 </html>
 
+ 
