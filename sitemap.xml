@@ -123,6 +123,12 @@
   </url>
   
   <url>
+    <loc>https://kurtmadel.com/tags/jenkins-x/</loc>
+    <lastmod>2019-03-31T11:30:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://kurtmadel.com/tags/john-irving/</loc>
     <lastmod>2019-01-21T22:45:15-04:00</lastmod>
     <priority>0</priority>
@@ -178,6 +184,12 @@
   <url>
     <loc>https://kurtmadel.com/tags/priority/</loc>
     <lastmod>2018-07-02T07:23:00-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/prow/</loc>
+    <lastmod>2019-03-31T11:30:15-04:00</lastmod>
     <priority>0</priority>
   </url>
   
