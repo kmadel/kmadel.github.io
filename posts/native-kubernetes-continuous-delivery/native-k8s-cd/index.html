@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-119704356-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="" name="keywords">
+<meta content="Native Kubernetes Continuous Delivery: Why should you care? - Kurt Madel" property="og:title">
+<title>Native Kubernetes Continuous Delivery: Why should you care? | Kurt Madel</title>
+<link rel="stylesheet" href="https://kurtmadel.com/css/style.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" integrity="sha256-Zd1icfZ72UBmsId/mUcagrmN7IN5Qkrvh75ICHIQVTk=" crossorigin="anonymous" />
+
+<link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+</head>
+
+<body>
+  <section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://kurtmadel.com/"><h1 class="title is-4">Kurt Madel</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://www.linkedin.com/in/kurt-madel-2304a6a/">
+            <span class="icon">
+              <i class="fa fa-linkedin"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://github.com/kmadel">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/kmadel">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+    <h2 class="subtitle">Random thoughts on technology and other stuff...</h2>
+  </div>
+</section>
+
+  <section class="section single">
+    <div class="container">
+      <h2 class="subtitle is-6">March 31, 2019</h2>
+      <h2 class="subtitle"><a href="/series/native-kubernetes-continuous-delivery">Native Kubernetes Continuous Delivery</a>  Part 1</h2>
+      <h1 class="title">Native Kubernetes Continuous Delivery: Why should you care?</h1>
+      
+      <div class="box">
+        <figure class="series-photo" itemprop="associatedMedia" itemscope="" itemtype="http://schema.org/ImageObject">
+          <div class="img">
+            <img itemprop="thumbnail" src="/photos/k8s-cd/pathfinder-of-the-seas.jpg" alt="SONY RX-100 ISO 125 37.1mm ƒ/4.9 1/250">
+          </div>
+          <a href="/photos/k8s-cd/pathfinder-of-the-seas.jpg" itemprop="contentUrl"></a>
+          <figcaption>Pathfinder of the Sea, Monument Avenue, Richmond, VA<br>Photograph by Kurt Madel ©2019</figcaption>
+        </figure>
+      </div>
+      
+      
+      <div class="tags">
+    
+        <a class="button is-link" href="/tags/ci">CI</a>
+    
+        <a class="button is-link" href="/tags/cd">CD</a>
+    
+        <a class="button is-link" href="/tags/tekton">Tekton</a>
+    
+        <a class="button is-link" href="/tags/kubernetes">Kubernetes</a>
+    
+        <a class="button is-link" href="/tags/native-k8s-cd">Native K8s CD</a>
+    
+</div>
+
+      
+      <div class="content">
+
+<p>Native Kubernetes Continuous Delivery (Native K8s CD) is, by definition, cloud native, so I wanted to start with the <a href="https://github.com/cncf/toc/blob/master/DEFINITION.md">CNCF definition of cloud native</a>:</p>
+
+<blockquote>
+<p>Cloud native technologies empower organizations to build and run scalable applications in modern, dynamic environments such as public, private, and hybrid clouds. Containers, service meshes, microservices, immutable infrastructure, and declarative APIs exemplify this approach.</p>
+
+<p>These techniques enable loosely coupled systems that are resilient, manageable, and observable. Combined with robust automation, they allow engineers to make high-impact changes frequently and predictably with minimal toil.</p>
+
+<p>The Cloud Native Computing Foundation seeks to drive adoption of this paradigm by fostering and sustaining an ecosystem of open source, vendor-neutral projects. We democratize state-of-the-art patterns to make these innovations accessible for everyone.</p>
+</blockquote>
+
+<p>&ldquo;Robust automation&rdquo; is a key component of continuous delivery (and just to clarify, when I say continuous delivery that includes continuous integration). The definition also mentions &ldquo;build&rdquo; and &ldquo;containers&rdquo;, and although those aren&rsquo;t mentioned in the same sentence, they come together quite nicely for continuous delivery. In this first part of this <a href="/series/native-kubernetes-continuous-delivery/">series on Native Kubernetes Continuous Delivery</a> I will explain what Native K8s CD is and why it is important. But first let&rsquo;s take a brief look at the rise of containers, an integral component of <em>cloud native</em> and continuous delivery, before we explain exactly what I mean by Native K8s CD.</p>
+
+<h2 id="why">Why?<a href="#why" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
+
+<p>I&rsquo;ll do my best <a href="https://www.youtube.com/watch?v=Vhh_GeBPOhs">Steve Ballmer impression</a>, but instead of &ldquo;Developers, developers, developers&rdquo; - <em>ad infinitum</em> - it is <strong>containers, containers, containers!</strong> And yes, I am sweating.</p>
+
+<p>Back in 2013, before Kubernetes was a thing, Docker was making Linux containers (LXC) much more accessible and Docker based containers took off (<a href="https://www.infoq.com/news/2014/03/docker_0_9">and eventually dropped LXC</a>). At the same time, continuous integration (CI) was becoming a common best practice for software application delivery. The use of Docker containers with CI began to be adopted as an easy and efficient way to manage CI tools - compilers, testing tools, security scans, etc - to ensure reproducible and more manageable build and test environments. No more &ldquo;but it worked on my machine!&rdquo; OR slightly different versions of Java in every environment OR waiting for heavy-weight VMs to startup OR overly complex non-standard configuration to manage CI/CD infrastructure. Containers helped solve these CI/CD problems and many more.</p>
+
+<p>Containers have been part of CI/CD for over half a decade now - and <strong>if you aren&rsquo;t using containers as an integral part of your CI/CD then you are doing it wrong, period.</strong> But there wasn&rsquo;t a manual on how to do it and managing all those containers can get pretty complicated. Sure, there were some popular CI and CD tools/platforms - but many of those tools and platforms were themselves trying to figure out exactly how to  most effectively leverage containers for CI/CD and it sometimes felt like trying to put a square peg in a round hole.</p>
+
+<p>Fast forward to 2019 and not only has Kubernetes become the <em>de facto</em> standard for managing and orchestrating containers, Kubernetes is quickly becoming the best platform for continuous delivery. But why is Kubernetes being adopted as the best platform for CD?</p>
+
+<p>Kubernetes is an excellent platform for executing CD because it has core features that naturally lend themselves to high-performing continuous delivery. These features include:</p>
+
+<ul>
+<li><strong>Scalability:</strong> K8s is scalable (K8s handles scheduling) and applications that are architected for K8s are horizontally scalable. K8s allows you to easily scale your CD workload up and down.</li>
+<li><strong>Resilience:</strong> K8s is fault tolerant. You can&rsquo;t really execute CD if your CD platform is down.</li>
+<li><strong>Built-in objects:</strong> Resource, Config and Credential management is built-in. These objects form the core of any CD platform.</li>
+<li><strong>Extensibility:</strong> K8s provides a number of extension points to include Custom Resource Definitions - ensuring that K8s is capable of providing a robust solution for any number of specialized use cases - like CD.</li>
+</ul>
+
+<h3 id="so-what-is-native-kubernetes-continuous-delivery">So, what is Native Kubernetes Continuous Delivery?<a href="#so-what-is-native-kubernetes-continuous-delivery" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<p>But what exactly is Native Kubernetes Continuous Delivery and why should you care?</p>
+
+<ul>
+<li>First, the CD process itself must run on and be orchestrated by Kubernetes. This by itself does not constitute native K8s CD - as it is <a href="https://github.com/helm/charts/tree/master/stable/jenkins">very easy to run non-native CI/CD platforms on K8s</a>.</li>
+<li>Secondly, containers must be used to execute the steps of a CD pipeline. Once again, this by itself does not constitute native K8s CD as many CD platforms have been using containers for CD since 2014.</li>
+<li>Finally, to be native K8s CD the tool must leverage native K8s resources or more specifically, must be built on top of <a href="https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/">Custom Resource Definitions (CRDs)</a>. This allows you to use native Kubernetes tools like <code>kubectl</code> to interact with the tool.</li>
+</ul>
+
+<p>And why should you care? Should you want anything less from your CD platform than what you want for your deployed production applications? Your CD will touch every single one of your applications (at least it should) - so why wouldn&rsquo;t you have the most robust, fully automated, scalable and resilient CD platform possible? A Native K8s CD platform will give you all of that and more.</p>
+
+<h2 id="how">How?<a href="#how" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
+
+<p>A number of large Kubernetes related projects have implemented their own CI/CD tooling and/or borrowed/built-on other such tooling from other Kubernetes projects. The best example of this is the <a href="https://github.com/kubernetes/test-infra">Kubernetes test-infra project</a> - part of the <a href="https://github.com/kubernetes/community/tree/master/sig-testing">Kubernetes Testing Special Interest Group (sig-testing)</a>. The <strong>test-infra</strong> project epitomizes Native Kubernetes CI/CD and shows how CI/CD on Kubernetes has evolved over the last 4 years. The <strong>test-infra</strong> project provides &ldquo;robust automation&rdquo;, and provides CI/CD for the entire Kubernetes project - sometimes over 10,000 CI jobs per day. The <strong>test-infra</strong> repository is home to a number of tools with the most important being <a href="https://github.com/kubernetes/test-infra/tree/master/prow">Prow</a> - &ldquo;a Kubernetes based CI/CD system.&rdquo; It is interesting that the test-infra project as a whole and even <a href="https://github.com/kubernetes/test-infra/blob/master/prow/cmd/README.md#auxiliary-components">Prow</a>, both had early support for Jenkins but have since moved to purely native K8s solutions for the execution of CI/CD jobs such as plain K8s pods, Knative Build and soon Tekton Pipelines.</p>
+
+<p><a href="https://github.com/knative/build">Knative Build</a>, part of the Knative project, was created solely to build and deploy Knative serverless applications. But a number of other projects began to leverage Knative Build for other CD purposes. And it quickly became evident that Knative Build was too low-level and lacked important CI/CD features. So <del>Knative Build Pipelines</del> <del>Knative Pipeline CRD</del> Tekton was created as a replacement.</p>
+
+<p><a href="https://jenkins-x.io/documentation/">Jenkins X</a>, a cloud native version of Jenkins, &ldquo;is a CI/CD platform for Kubernetes.&rdquo; And Jenkins X - with its integration of Tekton and Prow - provides Native K8s CD.</p>
+
+<h3 id="why-reinvent-the-wheel">Why reinvent the wheel?<a href="#why-reinvent-the-wheel" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<p>A really interesting thing about a number of these Native K8s CD projects is the synergy between them. Prow integrated Knative Build as a job execution engine - <a href="https://github.com/kubernetes/test-infra/pull/11888">adding Tekton and Jenkins X support as job execution engines is in the works</a>. Knative Build, Tekton and Jenkins X use Prow for their own CI/CD. It is also worth pointing out that <a href="https://cd.foundation/projects/">Tekton and Jenkins X are both inaugural projects</a> of the new <a href="https://cd.foundation/">Continuous Delivery Foundation (CDF)</a>. I believe this synergy will continue, and with the growing momemtum of the CDF, will make it easier than ever for all CI/CD practitioners to adopt Native K8s CD.</p>
+
+<p>In the next posts in this series I will explore some of these tools/platforms in greater detail, explore the synergy between them and explain how they provide Native K8s CD. I will be taking a look at: <a href="../tekton-standardizing-native-kubernetes-cd">Tekton</a>, Prow and then look at how Jenkins X brings everything together in one easy to use Native K8s CD platform.</p>
+
+
+
+
+
+  
+
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.css" integrity="sha256-sCl5PUOGMLfFYctzDW3MtRib0ctyUvI9Qsmq2wXOeBY=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/default-skin/default-skin.min.css" integrity="sha256-BFeI1V+Vh1Rk37wswuOYn5lsTcaU96hGaI7OUVCLjPc=" crossorigin="anonymous" />
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+</div>
+    </div>
+  </section>
+
+  
+<section class="section">
+  <div class="container">
+    <aside><div id="disqus_thread"></div></aside>
+    <script type="text/javascript">
+      var disqus_shortname = 'kurtmadel-com';
+      (function() {
+        
+        if (window.location.hostname == "localhost")
+            return;
+        
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+      <section class="section">
+      <div class="container has-text-centered">
+        <p>© 2019 Kurt Madel All Rights Reserved</p>
+      </div>
+    </section>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+    
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    <script src="/js/load-photoswipe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.js" integrity="sha256-UplRCs9v4KXVJvVY+p+RSo5Q4ilAUXh7kpjyIP5odyc=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe-ui-default.min.js" integrity="sha256-PWHOlUzc96pMc8ThwRIXPn8yH4NOLu42RQ0b9SpnpFk=" crossorigin="anonymous"></script>
+    
+  </body>
+</html>
+
+ 
