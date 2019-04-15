@@ -2,22 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Cdf on Kurt Madel</title>
-    <link>https://kurtmadel.com/tags/cdf/</link>
+    <link>http://localhost:1313/tags/cdf/</link>
     <description>Recent content in Cdf on Kurt Madel</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2019 Kurt Madel All Rights Reserved</copyright>
-    <lastBuildDate>Fri, 15 Mar 2019 21:00:15 -0400</lastBuildDate>
+    <lastBuildDate>Mon, 15 Apr 2019 06:00:15 -0400</lastBuildDate>
     
-	<atom:link href="https://kurtmadel.com/tags/cdf/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://localhost:1313/tags/cdf/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Prow: Keeping Kubernetes CI/CD Above Water</title>
+      <link>http://localhost:1313/posts/native-kubernetes-continuous-delivery/prow/</link>
+      <pubDate>Mon, 15 Apr 2019 06:00:15 -0400</pubDate>
+      
+      <guid>http://localhost:1313/posts/native-kubernetes-continuous-delivery/prow/</guid>
+      <description>If you are doing CI and/or CD at scale and you aren&amp;rsquo;t leveraging Native Kubernetes Continuous Delivery (Native K8s CD) then you are just doing it wrong missing out on a better way - plain and simple. And if there is one Kubernetes project that has been at the forefront of Native K8s CD and best exemplifies the why and the how of what makes Kubernetes such an excellent platform for executing CI/CD at scale - it is Prow.</description>
+    </item>
+    
+    <item>
       <title>Tekton Pipelines: Standardizing Native Kubernetes Continuous Delivery</title>
-      <link>https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/tekton-standardizing-native-kubernetes-cd/</link>
+      <link>http://localhost:1313/posts/native-kubernetes-continuous-delivery/tekton-standardizing-native-kubernetes-cd/</link>
       <pubDate>Fri, 15 Mar 2019 21:00:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/tekton-standardizing-native-kubernetes-cd/</guid>
+      <guid>http://localhost:1313/posts/native-kubernetes-continuous-delivery/tekton-standardizing-native-kubernetes-cd/</guid>
       <description>Perhaps the most exciting project that was announced as one of the four initial Continuous Delivery Foundation (CDF) projects is Tekton Pipelines, which in the vein of the Kubernetes ecosystem naming conventions is from the Ancient Greek word for carpenter. It is also the youngest of the four initial CDF projects. Surrounded by industry stalwarts with Jenkins on one side and Spinnaker the other - and then there is the upstart Jenkins X that is just over a year old, but seems much much older in tech years compared to Tekton.</description>
     </item>
     

@@ -16,7 +16,7 @@ ga('send', 'pageview');
 <meta content="" name="keywords">
 <meta content="Native Kubernetes Continuous Delivery: Why should you care? - Kurt Madel" property="og:title">
 <title>Native Kubernetes Continuous Delivery: Why should you care? | Kurt Madel</title>
-<link rel="stylesheet" href="https://kurtmadel.com/css/style.css">
+<link rel="stylesheet" href="http://localhost:1313//css/style.css">
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" integrity="sha256-Zd1icfZ72UBmsId/mUcagrmN7IN5Qkrvh75ICHIQVTk=" crossorigin="anonymous" />
@@ -45,7 +45,7 @@ ga('send', 'pageview');
   <div class="container">
     <nav class="nav">
       <div class="nav-left">
-        <a class="nav-item" href="https://kurtmadel.com/"><h1 class="title is-4">Kurt Madel</h1></a>
+        <a class="nav-item" href="http://localhost:1313//"><h1 class="title is-4">Kurt Madel</h1></a>
       </div>
       <div class="nav-right">
         <nav class="nav-item level is-mobile">
@@ -123,7 +123,7 @@ ga('send', 'pageview');
 <p>The Cloud Native Computing Foundation seeks to drive adoption of this paradigm by fostering and sustaining an ecosystem of open source, vendor-neutral projects. We democratize state-of-the-art patterns to make these innovations accessible for everyone.</p>
 </blockquote>
 
-<p>&ldquo;Robust automation&rdquo; is a key component of continuous delivery (and just to clarify, when I say continuous delivery that includes continuous integration). The definition also mentions &ldquo;build&rdquo; and &ldquo;containers&rdquo;, and although those aren&rsquo;t mentioned in the same sentence, they come together quite nicely for continuous delivery. In this post, the first part of this <a href="/series/native-kubernetes-continuous-delivery/">series on Native Kubernetes Continuous Delivery</a>, I will explain what Native K8s CD is and why it is important. But first let&rsquo;s take a brief look at the rise of containers, an integral component of <em>cloud native</em> and continuous delivery, before I explain exactly what I mean by Native K8s CD.</p>
+<p>&ldquo;Robust automation&rdquo; is a key component of continuous delivery (and just to clarify, when I say continuous delivery that includes continuous integration). The definition also mentions &ldquo;build&rdquo; and &ldquo;containers&rdquo;, and although those aren&rsquo;t mentioned in the same sentence, they come together quite nicely for continuous delivery. In this post, the first part of a <a href="/series/native-kubernetes-continuous-delivery/">series on Native Kubernetes Continuous Delivery</a>, I will explain what Native K8s CD is and why it is important. But first let&rsquo;s take a brief look at the rise of containers, an integral component of <em>cloud native</em> and continuous delivery, before I explain exactly what I mean by Native K8s CD.</p>
 
 <h2 id="why">Why?<a href="#why" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
 
@@ -166,7 +166,7 @@ ga('send', 'pageview');
 
 <h3 id="why-reinvent-the-wheel">Why reinvent the wheel?<a href="#why-reinvent-the-wheel" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
 
-<p>A really interesting thing about a number of these Native K8s CD projects is the synergy between them. Prow integrated Knative Build as a job execution engine - <a href="https://github.com/kubernetes/test-infra/pull/11888">adding Tekton and Jenkins X support as job execution engines is in the works</a>. Knative Build, Tekton and Jenkins X use Prow for their own CI/CD. It is also worth pointing out that <a href="https://cd.foundation/projects/">Tekton and Jenkins X are both inaugural projects</a> of the new <a href="https://cd.foundation/">Continuous Delivery Foundation (CDF)</a>. I believe this synergy will continue, and with the growing momemtum of the CDF, will make it easier than ever for all CI/CD practitioners to adopt Native K8s CD.</p>
+<p>A really interesting thing about a number of these Native K8s CD projects is the synergy between them. Prow integrated Knative Build as a job execution engine - <a href="https://github.com/kubernetes/test-infra/pull/11888">adding Tekton and Jenkins X support as job execution engines is in the works</a>. Knative Build, Tekton and Jenkins X use Prow for their own CI/CD. It is also worth pointing out that <a href="https://cd.foundation/projects/">Tekton and Jenkins X are both inaugural projects</a> of the new <a href="https://cd.foundation/">Continuous Delivery Foundation (CDF)</a>. I believe this synergy will continue, and with the growing momentum of the CDF, will make it easier than ever for all CI/CD practitioners to adopt Native K8s CD.</p>
 
 <p>In the next posts in this series I will explore some of these tools/platforms in greater detail, explore the synergy between them and explain how they provide Native K8s CD. I will be taking a look at: <a href="../tekton-standardizing-native-kubernetes-cd">Tekton</a>, Prow and then look at how Jenkins X brings everything together in one easy to use Native K8s CD platform.</p>
 
@@ -269,7 +269,7 @@ ga('send', 'pageview');
     <script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.js" integrity="sha256-UplRCs9v4KXVJvVY+p+RSo5Q4ilAUXh7kpjyIP5odyc=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe-ui-default.min.js" integrity="sha256-PWHOlUzc96pMc8ThwRIXPn8yH4NOLu42RQ0b9SpnpFk=" crossorigin="anonymous"></script>
     
-  </body>
+  <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
 </html>
 
  

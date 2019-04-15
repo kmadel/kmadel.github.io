@@ -2,22 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kubernetes on Kurt Madel</title>
-    <link>https://kurtmadel.com/tags/kubernetes/</link>
+    <link>http://localhost:1313/tags/kubernetes/</link>
     <description>Recent content in Kubernetes on Kurt Madel</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2019 Kurt Madel All Rights Reserved</copyright>
-    <lastBuildDate>Sun, 31 Mar 2019 11:30:15 -0400</lastBuildDate>
+    <lastBuildDate>Mon, 15 Apr 2019 06:00:15 -0400</lastBuildDate>
     
-	<atom:link href="https://kurtmadel.com/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://localhost:1313/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Prow: Keeping Kubernetes CI/CD Above Water</title>
+      <link>http://localhost:1313/posts/native-kubernetes-continuous-delivery/prow/</link>
+      <pubDate>Mon, 15 Apr 2019 06:00:15 -0400</pubDate>
+      
+      <guid>http://localhost:1313/posts/native-kubernetes-continuous-delivery/prow/</guid>
+      <description>If you are doing CI and/or CD at scale and you aren&amp;rsquo;t leveraging Native Kubernetes Continuous Delivery (Native K8s CD) then you are just doing it wrong missing out on a better way - plain and simple. And if there is one Kubernetes project that has been at the forefront of Native K8s CD and best exemplifies the why and the how of what makes Kubernetes such an excellent platform for executing CI/CD at scale - it is Prow.</description>
+    </item>
+    
+    <item>
       <title>Native Kubernetes Continuous Delivery: Why should you care?</title>
-      <link>https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/native-k8s-cd/</link>
+      <link>http://localhost:1313/posts/native-kubernetes-continuous-delivery/native-k8s-cd/</link>
       <pubDate>Sun, 31 Mar 2019 11:30:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/native-k8s-cd/</guid>
+      <guid>http://localhost:1313/posts/native-kubernetes-continuous-delivery/native-k8s-cd/</guid>
       <description>Native Kubernetes Continuous Delivery (Native K8s CD) is, by definition, cloud native, so I wanted to start with the CNCF definition of cloud native:
  Cloud native technologies empower organizations to build and run scalable applications in modern, dynamic environments such as public, private, and hybrid clouds. Containers, service meshes, microservices, immutable infrastructure, and declarative APIs exemplify this approach.
 These techniques enable loosely coupled systems that are resilient, manageable, and observable.</description>
@@ -25,37 +34,37 @@ These techniques enable loosely coupled systems that are resilient, manageable, 
     
     <item>
       <title>Tekton Pipelines: Standardizing Native Kubernetes Continuous Delivery</title>
-      <link>https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/tekton-standardizing-native-kubernetes-cd/</link>
+      <link>http://localhost:1313/posts/native-kubernetes-continuous-delivery/tekton-standardizing-native-kubernetes-cd/</link>
       <pubDate>Fri, 15 Mar 2019 21:00:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/tekton-standardizing-native-kubernetes-cd/</guid>
+      <guid>http://localhost:1313/posts/native-kubernetes-continuous-delivery/tekton-standardizing-native-kubernetes-cd/</guid>
       <description>Perhaps the most exciting project that was announced as one of the four initial Continuous Delivery Foundation (CDF) projects is Tekton Pipelines, which in the vein of the Kubernetes ecosystem naming conventions is from the Ancient Greek word for carpenter. It is also the youngest of the four initial CDF projects. Surrounded by industry stalwarts with Jenkins on one side and Spinnaker the other - and then there is the upstart Jenkins X that is just over a year old, but seems much much older in tech years compared to Tekton.</description>
     </item>
     
     <item>
       <title>Just-in-Time Autoscaling for Jenkins Agents with Kubernetes</title>
-      <link>https://kurtmadel.com/posts/cicd-with-kubernetes/just-in-time-autoscaling-for-jenkins-agents-with-kubernetes/</link>
+      <link>http://localhost:1313/posts/cicd-with-kubernetes/just-in-time-autoscaling-for-jenkins-agents-with-kubernetes/</link>
       <pubDate>Mon, 02 Jul 2018 07:23:00 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/posts/cicd-with-kubernetes/just-in-time-autoscaling-for-jenkins-agents-with-kubernetes/</guid>
+      <guid>http://localhost:1313/posts/cicd-with-kubernetes/just-in-time-autoscaling-for-jenkins-agents-with-kubernetes/</guid>
       <description>In Part 2 of the series CI/CD on Kubernetes we set up cluster autoscaling for a dedicated Jenkins agent node pool by utilizing the PodNodeSelector and LimitRanger admission controllers. In Part 3 of this CI/CD on Kubernetes series we will take advantage of another admission controller to scale-up the Jenkins agents node pool before a new request for a Jenkins agent pod requires the additional capacity. In other words, we want to initiate scaling-up of the Jenkins agent node pool before it is actually needed.</description>
     </item>
     
     <item>
       <title>Autoscaling Jenkins Agents with Kubernetes</title>
-      <link>https://kurtmadel.com/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/</link>
+      <link>http://localhost:1313/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/</link>
       <pubDate>Mon, 04 Jun 2018 23:09:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/</guid>
+      <guid>http://localhost:1313/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/</guid>
       <description>In Part 1 of the series CI/CD on Kubernetes we used the PodNodeSelector admission controller to segregate the Jenkins workloads - agents from masters (and from any other workload running on the cluster). In Part 2 of this CI/CD on Kubernetes series we will utilize the segregated jenkins-agents node pool as part of an autoscaling solution for the Jenkins agent workload, without impacting the availability or performance of the Jenkins masters node pool or any other segregated workload on the cluster.</description>
     </item>
     
     <item>
       <title>Segregating Jenkins Agents on Kubernetes</title>
-      <link>https://kurtmadel.com/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/</link>
+      <link>http://localhost:1313/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/</link>
       <pubDate>Fri, 25 May 2018 12:49:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/</guid>
+      <guid>http://localhost:1313/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/</guid>
       <description>This is the first part in the series CI/CD on Kubernetes. In this part we will explore the use of Kubernetes Namespaces and the Kubernetes PodNodeSelector Admission Controller to segregate Jenkins agent workloads from the Jenkins server (or master) workloads - as well as other workloads on the Kubernetes cluster. As we continue on with the series we will see why this will serve as an important foundation for managing Kubernetes configuration for Jenkins agent related features such as autoscaling, resource quotas and security constraints.</description>
     </item>
     

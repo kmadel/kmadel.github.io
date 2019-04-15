@@ -2,40 +2,40 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Series on Kurt Madel</title>
-    <link>https://kurtmadel.com/series/</link>
+    <link>http://localhost:1313/series/</link>
     <description>Recent content in Series on Kurt Madel</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2019 Kurt Madel All Rights Reserved</copyright>
     <lastBuildDate>Mon, 02 Jul 2018 07:23:00 -0400</lastBuildDate>
     
-	<atom:link href="https://kurtmadel.com/series/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://localhost:1313/series/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>CI/CD with Kubernetes</title>
-      <link>https://kurtmadel.com/series/cicd-on-kubernetes/</link>
+      <link>http://localhost:1313/series/cicd-on-kubernetes/</link>
       <pubDate>Mon, 02 Jul 2018 07:23:00 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/series/cicd-on-kubernetes/</guid>
+      <guid>http://localhost:1313/series/cicd-on-kubernetes/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Incoherent Thoughts of a Young Marine</title>
-      <link>https://kurtmadel.com/series/incoherent-thoughts-of-a-young-marine/</link>
+      <link>http://localhost:1313/series/incoherent-thoughts-of-a-young-marine/</link>
       <pubDate>Wed, 13 Mar 2019 09:32:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/series/incoherent-thoughts-of-a-young-marine/</guid>
+      <guid>http://localhost:1313/series/incoherent-thoughts-of-a-young-marine/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Native Kubernetes Continuous Delivery</title>
-      <link>https://kurtmadel.com/series/native-kubernetes-continuous-delivery/</link>
-      <pubDate>Sun, 31 Mar 2019 11:30:15 -0400</pubDate>
+      <link>http://localhost:1313/series/native-kubernetes-continuous-delivery/</link>
+      <pubDate>Mon, 15 Apr 2019 06:00:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/series/native-kubernetes-continuous-delivery/</guid>
+      <guid>http://localhost:1313/series/native-kubernetes-continuous-delivery/</guid>
       <description></description>
     </item>
     

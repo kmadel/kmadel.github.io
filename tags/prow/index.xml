@@ -2,22 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Prow on Kurt Madel</title>
-    <link>https://kurtmadel.com/tags/prow/</link>
+    <link>http://localhost:1313/tags/prow/</link>
     <description>Recent content in Prow on Kurt Madel</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2019 Kurt Madel All Rights Reserved</copyright>
-    <lastBuildDate>Sun, 31 Mar 2019 11:30:15 -0400</lastBuildDate>
+    <lastBuildDate>Mon, 15 Apr 2019 06:00:15 -0400</lastBuildDate>
     
-	<atom:link href="https://kurtmadel.com/tags/prow/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://localhost:1313/tags/prow/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Prow: Keeping Kubernetes CI/CD Above Water</title>
+      <link>http://localhost:1313/posts/native-kubernetes-continuous-delivery/prow/</link>
+      <pubDate>Mon, 15 Apr 2019 06:00:15 -0400</pubDate>
+      
+      <guid>http://localhost:1313/posts/native-kubernetes-continuous-delivery/prow/</guid>
+      <description>If you are doing CI and/or CD at scale and you aren&amp;rsquo;t leveraging Native Kubernetes Continuous Delivery (Native K8s CD) then you are just doing it wrong missing out on a better way - plain and simple. And if there is one Kubernetes project that has been at the forefront of Native K8s CD and best exemplifies the why and the how of what makes Kubernetes such an excellent platform for executing CI/CD at scale - it is Prow.</description>
+    </item>
+    
+    <item>
       <title>Native Kubernetes Continuous Delivery: Why should you care?</title>
-      <link>https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/native-k8s-cd/</link>
+      <link>http://localhost:1313/posts/native-kubernetes-continuous-delivery/native-k8s-cd/</link>
       <pubDate>Sun, 31 Mar 2019 11:30:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/native-k8s-cd/</guid>
+      <guid>http://localhost:1313/posts/native-kubernetes-continuous-delivery/native-k8s-cd/</guid>
       <description>Native Kubernetes Continuous Delivery (Native K8s CD) is, by definition, cloud native, so I wanted to start with the CNCF definition of cloud native:
  Cloud native technologies empower organizations to build and run scalable applications in modern, dynamic environments such as public, private, and hybrid clouds. Containers, service meshes, microservices, immutable infrastructure, and declarative APIs exemplify this approach.
 These techniques enable loosely coupled systems that are resilient, manageable, and observable.</description>

@@ -2,220 +2,220 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Kurt Madel</title>
-    <link>https://kurtmadel.com/tags/</link>
+    <link>http://localhost:1313/tags/</link>
     <description>Recent content in Tags on Kurt Madel</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2019 Kurt Madel All Rights Reserved</copyright>
     <lastBuildDate>Mon, 02 Jul 2018 07:23:00 -0400</lastBuildDate>
     
-	<atom:link href="https://kurtmadel.com/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Autoscaling</title>
-      <link>https://kurtmadel.com/tags/autoscaling/</link>
+      <link>http://localhost:1313/tags/autoscaling/</link>
       <pubDate>Mon, 02 Jul 2018 07:23:00 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/autoscaling/</guid>
+      <guid>http://localhost:1313/tags/autoscaling/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Books</title>
-      <link>https://kurtmadel.com/tags/books/</link>
+      <link>http://localhost:1313/tags/books/</link>
       <pubDate>Mon, 21 Jan 2019 22:45:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/books/</guid>
+      <guid>http://localhost:1313/tags/books/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Camp Schwab</title>
-      <link>https://kurtmadel.com/tags/camp-schwab/</link>
+      <link>http://localhost:1313/tags/camp-schwab/</link>
       <pubDate>Wed, 13 Mar 2019 09:32:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/camp-schwab/</guid>
+      <guid>http://localhost:1313/tags/camp-schwab/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Cd</title>
-      <link>https://kurtmadel.com/tags/cd/</link>
-      <pubDate>Sun, 31 Mar 2019 11:30:15 -0400</pubDate>
+      <link>http://localhost:1313/tags/cd/</link>
+      <pubDate>Mon, 15 Apr 2019 06:00:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/cd/</guid>
+      <guid>http://localhost:1313/tags/cd/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Cdf</title>
-      <link>https://kurtmadel.com/tags/cdf/</link>
-      <pubDate>Fri, 15 Mar 2019 21:00:15 -0400</pubDate>
+      <link>http://localhost:1313/tags/cdf/</link>
+      <pubDate>Mon, 15 Apr 2019 06:00:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/cdf/</guid>
+      <guid>http://localhost:1313/tags/cdf/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Ci</title>
-      <link>https://kurtmadel.com/tags/ci/</link>
-      <pubDate>Sun, 31 Mar 2019 11:30:15 -0400</pubDate>
+      <link>http://localhost:1313/tags/ci/</link>
+      <pubDate>Mon, 15 Apr 2019 06:00:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/ci/</guid>
+      <guid>http://localhost:1313/tags/ci/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Drinking</title>
-      <link>https://kurtmadel.com/tags/drinking/</link>
+      <link>http://localhost:1313/tags/drinking/</link>
       <pubDate>Mon, 17 Dec 2018 21:29:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/drinking/</guid>
+      <guid>http://localhost:1313/tags/drinking/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Family</title>
-      <link>https://kurtmadel.com/tags/family/</link>
+      <link>http://localhost:1313/tags/family/</link>
       <pubDate>Mon, 17 Dec 2018 21:29:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/family/</guid>
+      <guid>http://localhost:1313/tags/family/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Individualism</title>
-      <link>https://kurtmadel.com/tags/individualism/</link>
+      <link>http://localhost:1313/tags/individualism/</link>
       <pubDate>Wed, 13 Mar 2019 09:32:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/individualism/</guid>
+      <guid>http://localhost:1313/tags/individualism/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Jenkins</title>
-      <link>https://kurtmadel.com/tags/jenkins/</link>
+      <link>http://localhost:1313/tags/jenkins/</link>
       <pubDate>Mon, 02 Jul 2018 07:23:00 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/jenkins/</guid>
+      <guid>http://localhost:1313/tags/jenkins/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Jenkins X</title>
-      <link>https://kurtmadel.com/tags/jenkins-x/</link>
-      <pubDate>Sun, 31 Mar 2019 11:30:15 -0400</pubDate>
+      <link>http://localhost:1313/tags/jenkins-x/</link>
+      <pubDate>Mon, 15 Apr 2019 06:00:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/jenkins-x/</guid>
+      <guid>http://localhost:1313/tags/jenkins-x/</guid>
       <description></description>
     </item>
     
     <item>
       <title>John Irving</title>
-      <link>https://kurtmadel.com/tags/john-irving/</link>
+      <link>http://localhost:1313/tags/john-irving/</link>
       <pubDate>Mon, 21 Jan 2019 22:45:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/john-irving/</guid>
+      <guid>http://localhost:1313/tags/john-irving/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Kubernetes</title>
-      <link>https://kurtmadel.com/tags/kubernetes/</link>
-      <pubDate>Sun, 31 Mar 2019 11:30:15 -0400</pubDate>
+      <link>http://localhost:1313/tags/kubernetes/</link>
+      <pubDate>Mon, 15 Apr 2019 06:00:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/kubernetes/</guid>
+      <guid>http://localhost:1313/tags/kubernetes/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Liberties</title>
-      <link>https://kurtmadel.com/tags/liberties/</link>
+      <link>http://localhost:1313/tags/liberties/</link>
       <pubDate>Wed, 13 Mar 2019 09:32:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/liberties/</guid>
+      <guid>http://localhost:1313/tags/liberties/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Movie Review</title>
-      <link>https://kurtmadel.com/tags/movie-review/</link>
+      <link>http://localhost:1313/tags/movie-review/</link>
       <pubDate>Mon, 21 Jan 2019 22:45:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/movie-review/</guid>
+      <guid>http://localhost:1313/tags/movie-review/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Native K8s Cd</title>
-      <link>https://kurtmadel.com/tags/native-k8s-cd/</link>
-      <pubDate>Sun, 31 Mar 2019 11:30:15 -0400</pubDate>
+      <link>http://localhost:1313/tags/native-k8s-cd/</link>
+      <pubDate>Mon, 15 Apr 2019 06:00:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/native-k8s-cd/</guid>
+      <guid>http://localhost:1313/tags/native-k8s-cd/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Philosphy</title>
-      <link>https://kurtmadel.com/tags/philosphy/</link>
+      <link>http://localhost:1313/tags/philosphy/</link>
       <pubDate>Sun, 16 Dec 2018 12:03:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/philosphy/</guid>
+      <guid>http://localhost:1313/tags/philosphy/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Priority</title>
-      <link>https://kurtmadel.com/tags/priority/</link>
+      <link>http://localhost:1313/tags/priority/</link>
       <pubDate>Mon, 02 Jul 2018 07:23:00 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/priority/</guid>
+      <guid>http://localhost:1313/tags/priority/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Prow</title>
-      <link>https://kurtmadel.com/tags/prow/</link>
-      <pubDate>Sun, 31 Mar 2019 11:30:15 -0400</pubDate>
+      <link>http://localhost:1313/tags/prow/</link>
+      <pubDate>Mon, 15 Apr 2019 06:00:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/prow/</guid>
+      <guid>http://localhost:1313/tags/prow/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Ramblings</title>
-      <link>https://kurtmadel.com/tags/ramblings/</link>
+      <link>http://localhost:1313/tags/ramblings/</link>
       <pubDate>Wed, 13 Mar 2019 09:32:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/ramblings/</guid>
+      <guid>http://localhost:1313/tags/ramblings/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Religous Faith</title>
-      <link>https://kurtmadel.com/tags/religous-faith/</link>
+      <link>http://localhost:1313/tags/religous-faith/</link>
       <pubDate>Sun, 16 Dec 2018 12:03:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/religous-faith/</guid>
+      <guid>http://localhost:1313/tags/religous-faith/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Tekton</title>
-      <link>https://kurtmadel.com/tags/tekton/</link>
-      <pubDate>Sun, 31 Mar 2019 11:30:15 -0400</pubDate>
+      <link>http://localhost:1313/tags/tekton/</link>
+      <pubDate>Mon, 15 Apr 2019 06:00:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/tekton/</guid>
+      <guid>http://localhost:1313/tags/tekton/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Usmc</title>
-      <link>https://kurtmadel.com/tags/usmc/</link>
+      <link>http://localhost:1313/tags/usmc/</link>
       <pubDate>Wed, 13 Mar 2019 09:32:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/tags/usmc/</guid>
+      <guid>http://localhost:1313/tags/usmc/</guid>
       <description></description>
     </item>
     

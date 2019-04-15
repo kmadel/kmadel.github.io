@@ -2,40 +2,40 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>CI/CD with Kubernetes on Kurt Madel</title>
-    <link>https://kurtmadel.com/series/cicd-on-kubernetes/</link>
+    <link>http://localhost:1313/series/cicd-on-kubernetes/</link>
     <description>Recent content in CI/CD with Kubernetes on Kurt Madel</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2019 Kurt Madel All Rights Reserved</copyright>
     <lastBuildDate>Mon, 02 Jul 2018 07:23:00 -0400</lastBuildDate>
     
-	<atom:link href="https://kurtmadel.com/series/cicd-on-kubernetes/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://localhost:1313/series/cicd-on-kubernetes/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Just-in-Time Autoscaling for Jenkins Agents with Kubernetes</title>
-      <link>https://kurtmadel.com/posts/cicd-with-kubernetes/just-in-time-autoscaling-for-jenkins-agents-with-kubernetes/</link>
+      <link>http://localhost:1313/posts/cicd-with-kubernetes/just-in-time-autoscaling-for-jenkins-agents-with-kubernetes/</link>
       <pubDate>Mon, 02 Jul 2018 07:23:00 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/posts/cicd-with-kubernetes/just-in-time-autoscaling-for-jenkins-agents-with-kubernetes/</guid>
+      <guid>http://localhost:1313/posts/cicd-with-kubernetes/just-in-time-autoscaling-for-jenkins-agents-with-kubernetes/</guid>
       <description>In Part 2 of the series CI/CD on Kubernetes we set up cluster autoscaling for a dedicated Jenkins agent node pool by utilizing the PodNodeSelector and LimitRanger admission controllers. In Part 3 of this CI/CD on Kubernetes series we will take advantage of another admission controller to scale-up the Jenkins agents node pool before a new request for a Jenkins agent pod requires the additional capacity. In other words, we want to initiate scaling-up of the Jenkins agent node pool before it is actually needed.</description>
     </item>
     
     <item>
       <title>Autoscaling Jenkins Agents with Kubernetes</title>
-      <link>https://kurtmadel.com/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/</link>
+      <link>http://localhost:1313/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/</link>
       <pubDate>Mon, 04 Jun 2018 23:09:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/</guid>
+      <guid>http://localhost:1313/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/</guid>
       <description>In Part 1 of the series CI/CD on Kubernetes we used the PodNodeSelector admission controller to segregate the Jenkins workloads - agents from masters (and from any other workload running on the cluster). In Part 2 of this CI/CD on Kubernetes series we will utilize the segregated jenkins-agents node pool as part of an autoscaling solution for the Jenkins agent workload, without impacting the availability or performance of the Jenkins masters node pool or any other segregated workload on the cluster.</description>
     </item>
     
     <item>
       <title>Segregating Jenkins Agents on Kubernetes</title>
-      <link>https://kurtmadel.com/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/</link>
+      <link>http://localhost:1313/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/</link>
       <pubDate>Fri, 25 May 2018 12:49:15 -0400</pubDate>
       
-      <guid>https://kurtmadel.com/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/</guid>
+      <guid>http://localhost:1313/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/</guid>
       <description>This is the first part in the series CI/CD on Kubernetes. In this part we will explore the use of Kubernetes Namespaces and the Kubernetes PodNodeSelector Admission Controller to segregate Jenkins agent workloads from the Jenkins server (or master) workloads - as well as other workloads on the Kubernetes cluster. As we continue on with the series we will see why this will serve as an important foundation for managing Kubernetes configuration for Jenkins agent related features such as autoscaling, resource quotas and security constraints.</description>
     </item>
     
