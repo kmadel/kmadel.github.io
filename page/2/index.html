@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
+	<meta name="generator" content="Hugo 0.55.5" />
 
 
 <script type="application/javascript">
@@ -18,14 +19,14 @@ if (!doNotTrack) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta content="" name="keywords">
-<meta content="autoscaling - Kurt Madel" property="og:title">
-<title>autoscaling | Kurt Madel</title>
+<meta content="Kurt Madel" property="og:title">
+<title>Kurt Madel</title>
 <link rel="stylesheet" href="https://kurtmadel.com/css/style.css">
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" integrity="sha256-Zd1icfZ72UBmsId/mUcagrmN7IN5Qkrvh75ICHIQVTk=" crossorigin="anonymous" />
 
-<link rel="alternate" type="application/rss+xml+xml" href="https://kurtmadel.com/tags/autoscaling/index.xml" title="Kurt Madel" />
+<link rel="alternate" type="application/rss+xml+xml" href="https://kurtmadel.com/index.xml" title="Kurt Madel" />
 <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
 <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
 <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
@@ -81,20 +82,88 @@ if (!doNotTrack) {
 </section>
 
   <section class="section">
-    <div class="container">
-      <h1 class="title">autoscaling</h1>
-      <div class="content"></div>
-      
-      <article>
-        <h3 class="subtitle is-6">June 4, 2018</h3>
-        <h3 class="title"><span class="subtitle">Part 2: </span><a href="https://kurtmadel.com/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/">Autoscaling Jenkins Agents with Kubernetes</a></h3>
-      </article>
-      
-      <article>
-        <h3 class="subtitle is-6">July 2, 2018</h3>
-        <h3 class="title"><span class="subtitle">Part 3: </span><a href="https://kurtmadel.com/posts/cicd-with-kubernetes/just-in-time-autoscaling-for-jenkins-agents-with-kubernetes/">Just-in-Time Autoscaling for Jenkins Agents with Kubernetes</a></h3>
-      </article>
-      
+    <div class="container columns">
+      <div class="column is-three-quarters">
+        
+        <article>
+          <h2 class="subtitle is-6">May 25, 2018</h2>
+          <h2 class="subtitle"><a href="/series/cicd-on-kubernetes">CICD on Kubernetes</a>  Part 1</h2>
+          <h1 class="title"><a href="https://kurtmadel.com/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/">Segregating Jenkins Agents on Kubernetes</a></h1>
+          
+          <div class="tags">
+    
+        <a class="button is-link" href="/tags/kubernetes">Kubernetes</a>
+    
+        <a class="button is-link" href="/tags/jenkins">Jenkins</a>
+    
+        <a class="button is-link" href="/tags/ci">CI</a>
+    
+        <a class="button is-link" href="/tags/cd">CD</a>
+    
+</div>
+
+          
+          <div class="content">
+            This is the first part in the series CI/CD on Kubernetes. In this part we will explore the use of Kubernetes Namespaces and the Kubernetes PodNodeSelector Admission Controller to segregate Jenkins agent workloads from the Jenkins server (or master) workloads - as well as other workloads on the Kubernetes cluster. As we continue on with the series we will see why this will serve as an important foundation for managing Kubernetes configuration for Jenkins agent related features such as autoscaling, resource quotas and security constraints.
+            
+            ...<a class="button is-link" href="https://kurtmadel.com/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/" style="height:28px">
+              Read more
+              <span class="icon is-small">
+                <i class="fa fa-angle-double-right"></i>
+              </span>
+            </a>
+            
+          </div>
+        </article>
+        
+        <section class="section">
+  <div class="container">
+    <nav class="level is-mobile">
+      <div class="level-left">
+        <div class="level-item">
+          
+          <a class="button" href="/">
+            <span class="icon is-small is-marginless">
+              <i class="fa fa-angle-left"></i>
+            </span>
+            Newer
+          </a>
+          
+        </div>
+      </div>
+      <div class="level-right is-marginless">
+        <div class="level-item">
+          
+          <a class="button is-disabled">
+            Older
+            <span class="icon is-small is-marginless">
+              <i class="fa fa-angle-right"></i>
+            </span>
+          </a>
+          
+        </div>
+      </div>
+    </nav>
+  </div>
+</section>
+
+      </div>
+      <div class="column is-4">
+        <aside class="menu">
+          <p class="menu-label">
+              Series
+          </p>
+          <ul class="menu-list">
+            
+            <li><a href="https://kurtmadel.com/series/cicd-on-kubernetes" class="is-uppercase">cicd-on-kubernetes (3)</a></li>
+            
+            <li><a href="https://kurtmadel.com/series/incoherent-thoughts-of-a-young-marine" class="is-uppercase">incoherent-thoughts-of-a-young-marine (4)</a></li>
+            
+            <li><a href="https://kurtmadel.com/series/native-kubernetes-continuous-delivery" class="is-uppercase">native-kubernetes-continuous-delivery (4)</a></li>
+            
+          </ul>
+        </aside>
+      </div>
     </div>
   </section>
       <section class="section">
@@ -109,3 +178,5 @@ if (!doNotTrack) {
     
   </body>
 </html>
+
+

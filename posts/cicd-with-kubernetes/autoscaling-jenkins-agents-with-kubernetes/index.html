@@ -3,12 +3,16 @@
 <head>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-119704356-1', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-119704356-1', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 
 <meta charset="UTF-8">
@@ -123,7 +127,9 @@ ga('send', 'pageview');
   <figcaption>
       <h6>jenkinsAgentLimitRange.yml</h6>
   </figcaption>
-  <pre><code class="language-yaml">apiVersion: v1
+  
+```yaml
+apiVersion: v1
 kind: LimitRange
 metadata:
   name: jenkins-agent-limit-range
@@ -141,7 +147,7 @@ spec:
     min:
       cpu: 0.25
       memory: 500Mi
-</code></pre>
+```
 
 </figure>
 
@@ -167,17 +173,10 @@ spec:
 
 <p>We want to run a number of different workloads on our Kubernetes cluster - for example, in addition to providing dynamic Jenkins agents, we would also like to run Jenkins masters on the cluster and even deploy production applications to the same cluster. Of course you could set up separate clusters for each of these workloads, but the Kubernetes <code>Namespace</code> capability provides manageable multi-tenant workloads, all within one Kubernetes cluster. For some workloads autoscaling is quite useful, whereas for other types of workloads autoscaling may not make sense, and may even be detrimental. Specifically, cluster autoscaling is not a good fit for Jenkins masters. The Cluster Autoscaler will down-scale in addition to up-scaling - and when it scales down it will move/reschedule existing <code>pods</code> to other <code>nodes</code> in the pool so that <code>node</code> can be removed from the <code>node pool</code>. These sudden unexpected stoppages for down-scaling is not a behavior we want for the Jenkins masters&rsquo; workloads. But cluster autoscaling makes a lot of sense for Jenkins agents. So we will use the Jenkins agent <code>namespace</code> tied to a Jenkins agent <code>node pool</code> created in <a href="https://kurtmadel.com/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/#putting-it-all-together">part one of this series</a> to ensure that only <code>nodes</code> used by Jenkins agents - and not other workloads - are autoscaled.</p>
 
-
 <figure>
-    
-        <img src="k8s-cluster-autoscaling.png" />
-    
-    
-    <figcaption>
-        <h4>Kubernetes Autoscaling Architecture Overview Diagram</h4>
-        
-    </figcaption>
-    
+    <img src="k8s-cluster-autoscaling.png"/> <figcaption>
+            <h4>Kubernetes Autoscaling Architecture Overview Diagram</h4>
+        </figcaption>
 </figure>
 
 
@@ -191,8 +190,9 @@ spec:
 <figure>
   <figcaption>
       <h6>clusterAutoscalerDeployment.yml</h6>
-  </figcaption>
-  <pre><code class="language-yaml">apiVersion: extensions/v1beta1
+  </figcaption></p>
+
+<pre><code class="language-yaml">apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: cluster-autoscaler
@@ -228,14 +228,16 @@ metadata:
 .
 </code></pre>
 
-</figure>
+<p></figure>
 The <code>cluster-autoscaler</code> <code>Deployment</code> targets a master <code>node</code>in the <code>kube-system</code> <code>namespace</code> as specified by the <code>toleration</code> and <code>nodeSelector</code> configuration above. Deploying to a <code>master</code> <code>node</code>is intentional, but is not absolutely necessary. However, the kops master <code>node</code> in AWS is by default configured with an <a href="https://github.com/kubernetes/kops/blob/master/pkg/model/iam/tests/iam_builder_master_strict.json">AWS IAM role</a> that allows it to manipulate AWS AutoScalingGroups, whereas you would have to add <a href="https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler/cloudprovider/aws#permissions">additional IAM permissions</a> if deploying to a worker <code>node</code>. The important parameters for the <code>cluster-autoscaler</code> <code>command</code> are the <code>--cloud-provider=aws</code> and the <code>--nodes</code> parameter - which in addition to specifying the minimum scale-down and maximum scale-up <code>node</code> values, also specifies the value of the <code>Name</code> key for the AWS AutoScalingGroup to target for autoscaling - which in this case corresponds to the Jenkins agent <code>node pool</code>. The range specified for the <code>--nodes</code> parameter should match the <code>minSize</code> and <code>maxSize</code> of the Jenkins agent <code>InstanceGroup</code> and an updated version from the last post is included below. The complete configuration - including RBAC configuration - for the Jenkins agent <code>node pool</code> Cluster Autoscaler <code>Deployment</code> is available <a href="https://gist.github.com/kmadel/b4f2ee04336e389715bf6204f35e6eda">here</a>.</p>
 
 <figure>
   <figcaption>
       <h6>Jenkins agent InstanceGroup/node pool</h6>
   </figcaption>
-  <pre><code class="language-yaml">apiVersion: kops/v1alpha2
+  
+```yaml
+apiVersion: kops/v1alpha2
 kind: InstanceGroup
 metadata:
   creationTimestamp: 2018-05-25T11:30:23Z
@@ -253,7 +255,7 @@ spec:
   role: Node
   subnets:
   - us-east-1b
-</code></pre>
+```
 
 </figure>
 

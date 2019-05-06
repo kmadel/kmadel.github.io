@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-119704356-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="" name="keywords">
+<meta content="Jenkins X Goes Native - Kurt Madel" property="og:title">
+<title>Jenkins X Goes Native | Kurt Madel</title>
+<link rel="stylesheet" href="https://kurtmadel.com/css/style.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" integrity="sha256-Zd1icfZ72UBmsId/mUcagrmN7IN5Qkrvh75ICHIQVTk=" crossorigin="anonymous" />
+
+<link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+</head>
+
+<body>
+  <section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://kurtmadel.com/"><h1 class="title is-4">Kurt Madel</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://www.linkedin.com/in/kurt-madel-2304a6a/">
+            <span class="icon">
+              <i class="fa fa-linkedin"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://github.com/kmadel">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/kmadel">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+    <h2 class="subtitle">Random thoughts on technology and other stuff...</h2>
+  </div>
+</section>
+
+  <section class="section single">
+    <div class="container">
+      <h2 class="subtitle is-6">May 6, 2019</h2>
+      <h2 class="subtitle"><a href="/series/native-kubernetes-continuous-delivery">Native Kubernetes Continuous Delivery</a>  Part 4</h2>
+      <h1 class="title">Jenkins X Goes Native</h1>
+      
+      <div class="box">
+        <figure class="series-photo" itemprop="associatedMedia" itemscope="" itemtype="http://schema.org/ImageObject">
+          <div class="img">
+            <img itemprop="thumbnail" src="/photos/native-kubernetes-continuous-delivery/neptune-bologna.jpg" alt="SONY RX-100 ISO 125 310.4mm ƒ/1.8 1/1000">
+          </div>
+          <a href="/photos/native-kubernetes-continuous-delivery/neptune-bologna.jpg" itemprop="contentUrl"></a>
+          <figcaption>Fontana di Nettuno, Piazza del Nettuno, Bologna, Italy<br>Photograph by Kurt Madel ©2019</figcaption>
+        </figure>
+      </div>
+      
+      
+      <div class="tags">
+    
+        <a class="button is-link" href="/tags/ci">CI</a>
+    
+        <a class="button is-link" href="/tags/cd">CD</a>
+    
+        <a class="button is-link" href="/tags/tekton">Tekton</a>
+    
+        <a class="button is-link" href="/tags/prow">Prow</a>
+    
+        <a class="button is-link" href="/tags/jenkins-x">Jenkins X</a>
+    
+        <a class="button is-link" href="/tags/kubernetes">Kubernetes</a>
+    
+        <a class="button is-link" href="/tags/native-k8s-cd">Native K8s CD</a>
+    
+</div>
+
+      
+      <div class="content">
+
+<p>In two of the previous posts of <a href="/series/native-kubernetes-continuous-delivery/">this series</a> I wrote about two <a href="../native-k8s-cd/">Native Kubernetes Continuous Delivery (Native K8s CD)</a> solutions - <a href="../tekton-standardizing-native-kubernetes-cd/">Tekton</a> and <a href="../prow/">Prow</a>. In this post we will explore how Jenkins X uses both of these for its own CD, but more importantly how Jenkins X has seamlessly integrated both of these <em>Native K8s CD</em> platforms (among numerous others) into one easily consumable package making it incredibly easy for any CD practitioner to implement and execute best-of-breed <em>Native K8s CD</em>.</p>
+
+<h2 id="why-is-native-k8s-cd-important">Why is Native K8s CD important?<a href="#why-is-native-k8s-cd-important" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
+
+<p>Before we get to how Jenkins X went native, let&rsquo;s review what <em>Native K8s CD</em> is and why I believe <em>Native K8s CD</em> is the only way to do CD if you really care about CD impacting your business and keeping up with your competitors.</p>
+
+<h3 id="what-is-native-k8s-cd">What is Native K8s CD?<a href="#what-is-native-k8s-cd" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<ul>
+<li>First, the CD process itself must run on and be orchestrated by K8s. This by itself does not constitute <em>Native K8s CD</em> - as it is <a href="https://github.com/helm/charts/tree/master/stable/jenkins">very easy to run Jenkins in a Java Virtual Machine (JVM) in a container in a pod on K8s</a>, but the CD process or platform must run as loosely coupled microservices packaged as lightweight containers to be truly <em>Native K8s CD</em>. Afterall, you can <a href="https://hub.docker.com/r/ibmcom/websphere-traditional">put a monolithic app server like WebSphere in a container</a> - but should you (the Docker image for <strong>WebSphere traditional</strong> is <strong><em>just</em></strong> <strong>1GB</strong>)?</li>
+<li>Secondly, containers must be used to execute the steps of a CD pipeline. Once again, this by itself does not constitute <em>Native K8s CD</em> as <em>JVM Jenkins</em> has had the ability to use containers for CD pipeline steps <a href="https://github.com/jenkinsci/docker-plugin/commit/50ec99db8571c6740412963461494dde97159203">as far back as 2014</a> - as do many other CD tools - like GitLab for example which is no more <em>Native K8s CD</em> than <em>JVM Jenkins</em>.</li>
+<li>Finally, to be <em>Native K8s CD</em> the tool must leverage native K8s resources, or more specifically, must be built on top of <a href="https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/">Custom Resource Definitions (CRDs)</a>. This allows the tool to tap important native K8s capabilities, easily integrate with other native solutions, and enables the transparent use of native Kubernetes tools like <code>kubectl</code> to interact directly with the tool&rsquo;s custom objects or CRDs.</li>
+</ul>
+
+<p><em>JVM Jenkins</em> running on K8s does not fit this definition of <em>Native K8s CD</em>. And actually, believe it or not, neither did Jenkins X - at least not until <a href="https://jenkins-x.io/news/jenkins-x-next-gen-pipeline-engine/">Jenkins X adopted <em>NextGen</em> Pipelines with Tekton</a>.</p>
+
+<h3 id="wasn-t-jenkins-x-already-native-k8s-cd">Wasn&rsquo;t Jenkins X already Native K8s CD?<a href="#wasn-t-jenkins-x-already-native-k8s-cd" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<p>Cloud native - perhaps - but <strong>100% Native K8s CD</strong> - <strong>NO</strong>. Jenkins X was not fully <em>Native K8s CD</em> before using <a href="https://tekton.dev/">Tekton</a> as its Pipeline execution engine - as we will see below. Running legacy or traditional tools as containers on Kubernetes doesn&rsquo;t make them <em>Native K8s CD</em>. Sure, it may provide some advantages by running those tools on K8s - like better scalability and fault tolerance - but those legacy tools don&rsquo;t take advantage of all the <em>Native K8s CD</em> features and capabilities.</p>
+
+<h3 id="why-did-jenkins-x-go-native">Why did Jenkins X go Native?<a href="#why-did-jenkins-x-go-native" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<ul>
+<li><strong>Standardization:</strong> Kubernetes has become the defacto standard for container orchestration via declarative infrastructure, the same thing is happening for Kubernetes CD Pipelines with Tekton and Jenkins X. And if you aren&rsquo;t already using lightweight, highly scalable containers to execute your CD toolchain then you are falling behind your competitors.</li>
+<li><strong>Lead, Not Follow:</strong> Jenkins X is proving to be a leader in the <em>Native K8s CD</em> space by adopting and contributing to other key K8s CD related projects that Jenkins X then leverages to be the best comprehensive CD platform on K8s. Jenkins X contributors have made many important contributions to <a href="https://github.com/kubernetes/test-infra/pulls?q=is%3Apr+author%3Accojocar">Prow</a> and <a href="https://github.com/tektoncd/pipeline/pulls?q=is%3Apr+author%3Aabayer">Tekton</a> - among other important K8s projects.</li>
+<li><strong>Performance:</strong> Older CI/CD solutions are based on legacy architecture that isn&rsquo;t highly scalable, has incomplete APIs and CLI, and is difficult to manage and update. <em>Native K8s CD</em> is lighter, faster, stronger and Jenkins X makes it easy to use.</li>
+</ul>
+
+<h3 id="so-why-wasn-t-jenkins-x-completely-native-k8s-cd-before-now">So why wasn&rsquo;t Jenkins X completely <em>Native K8s CD</em> before now?<a href="#so-why-wasn-t-jenkins-x-completely-native-k8s-cd-before-now" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<p>Jenkins X ran on and is orchestrated by K8s. Jenkins X used containers to execute the steps of CD pipelines. Jenkins X has even leveraged <a href="https://github.com/jenkins-x/jx/blob/master/pkg/kube/crds.go">its very own CRDs</a> to provide native integrations with K8s - but up until recently, it still relied on <em>JVM Jenkins</em>, a non-native K8s solution that is very difficult to effectively scale, as the execution engine of its CD pipelines. And even with the very cool ephemeral <a href="https://jenkins-x.io/news/serverless-jenkins/">Serverless Jenkins</a> capabilities, it still had a very much non-Native K8s pipeline execution engine.</p>
+
+<h2 id="native-k8s-cd-and-beyond">Native K8s CD and Beyond<a href="#native-k8s-cd-and-beyond" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
+
+<h3 id="jenkins-x-crds">Jenkins X CRDs<a href="#jenkins-x-crds" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<p><a href="https://jenkins-x.io/architecture/custom-resources/">By embracing CRDs from the very beginning</a>, Jenkins X has been able to transparently integrate the important <em>Native K8s CD</em> projects of <a href="https://jenkins-x.io/architecture/prow/">Prow</a> and now <a href="https://jenkins-x.io/architecture/jenkins-x-pipelines/">Tekton</a>. The <code>PipelineActivity</code> CRD is a great example of how Jenkins X has leveraged native K8s capabilities to provide an abstraction layer that eases the integration of Jenkins X components and other tools. For example:</p>
+
+<ul>
+<li>It doesn&rsquo;t matter if Jenkins X uses a static <em>JVM Jenkins</em> or Prow to consume a GitHub webhook - this is totally abstracted from the Jenkins X end user. (Actually it does matter if you don&rsquo;t want your CD to miss important webhooks - since <a href="../prow/#prow-is-a-github-webhook-listener">Prow is the better solution for listening for GitHub webhooks</a>.)</li>
+<li>It doesn&rsquo;t matter if Prow kicks off a job using an ephemeral <em>JVM Jenkins</em> via the <a href="https://github.com/jenkinsci/jenkinsfile-runner">Jenkinsfile Runner</a> or Knative Build or Tekton Pipelines - again, this is totally abstracted from the Jenkins X end user.</li>
+<li>It doesn&rsquo;t matter if you interact with your Jenkins X job via the <a href="https://jenkins-x.io/commands/jx_get_activities/">JX CLI</a> or the Jenkins X UI or even <a href="https://jenkins-x.io/architecture/prow/#deck">Prow&rsquo;s <code>deck</code> component</a>.</li>
+</ul>
+
+<p>Of course there is a lot going on under the hood of Jenkins X to make all of this possible. But Jenkins X has abstracted it in such a way that allows Jenkins X to seamlessly integrate cutting-edge technologies in a way that is mostly transparent to the end user.</p>
+
+<h3 id="jenkins-x-gets-gitops">Jenkins X Gets GitOps<a href="#jenkins-x-gets-gitops" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<p>Weaveworks coined the phrase and concept of <a href="https://www.weave.works/blog/gitops-operations-by-pull-request">GitOps back in 2017</a>. So, <a href="https://redmonk.com/jgovernor/2017/08/08/oh-hai-gitops-what-is-gitops/">what is GitOps</a> and why is it important? In its most basic definition, GitOps is the declarative management of infrastructure delivery and software delivery as code in Git repositories. And GitOps is a very important part of what makes Jenkins X such a powerful software delivery platform - even though GitOps is not an exclusive <em>Native K8s CD</em> capability. And even though any CD tool on any platform can take advantage of <a href="https://github.com/kypseli/cb-core-mm/blob/kube-workshop/config-as-code.yml">GitOps with declarative configuration</a>, setting up GitOps outside of Jenkins X is not a trivial exercise - especially when compared to getting it OOTB with Jenkins X.</p>
+
+<p>For purely native K8s workloads, Jenkins X uses GitOps to manage the deployment environments for your applications. From <a href="https://jenkins-x.io/developing/preview/">PR previews</a> to staging to production, or <a href="https://jenkins-x.io/commands/jx_create_environment/">any other environment you want to define</a> - Jenkins X manages all changes/deployments as code in a Git repository.</p>
+
+<p>Jenkins X also provides the ability to <a href="https://jenkins-x.io/getting-started/manage-via-gitops/#using-gitops-to-manage-jenkins-x">manage your Jenkins X installation with GitOps</a> allowing you to easily track all changes to your Jenkins X installation as Git commits.</p>
+
+<h3 id="jenkins-x-on-the-prow-chatops-more">Jenkins X, On the Prow - ChatOps &amp; More<a href="#jenkins-x-on-the-prow-chatops-more" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<p><a href="https://github.com/jenkins-x/prow-config-tekton/blob/master/prow/config.yaml">Jenkins X uses Prow for its own CD</a>. And if you read <a href="../prow.md">my post on Prow</a>, you already know how awesome it is at automating CD for GitHub Orgs and repos. But Jenkins X didn&rsquo;t stop with just using Prow for its own CD, Jenkins X integrates Prow with <a href="https://jenkins-x.io/developing/create-quickstart/">Quickstarts</a> - so you don&rsquo;t have to know anything at all about Prow to take advantage of its features.</p>
+
+<p>One really cool Prow feature that you get OOTB with Jenkins X is ChatOps. Prow <a href="../prow/#prow-chatops">seamlessly marries GitOps and ChatOps</a> making both features even better. Prow&rsquo;s ChatOps allows you to interact with Jenkins X via <a href="https://prow.k8s.io/command-help">simple <code>/foo</code> commands</a> in GitHub issues and PR comments.</p>
+
+<p>For another interesting perspective on ChatOps, check out <a href="https://technologyconversations.com/2019/04/24/implementing-chatops-with-jenkins-x/">this blog post on ChatOps with Jenkins X by Viktor Farcic</a>.</p>
+
+<h3 id="re-tooling-with-tekton">Re-tooling with Tekton<a href="#re-tooling-with-tekton" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<p>Jenkins X supports a number of Pipeline execution engines. In the beginning it was just a static <em>JVM Jenkins</em> engine. But over time, Jenkins X has added several more execution engines.</p>
+
+<p>Next was <a href="https://medium.com/@jdrawlings/serverless-jenkins-with-jenkins-x-9134cbfe6870">serverless Jenkins</a> - basically an ephemeral <em>JVM Jenkins</em> via the Jenkinsfile Runner, and this was made possible by integrating Prow. The integration of Prow also allowed for the easy integration of Knative Build pipelines.</p>
+
+<p>Jenkins X has since moved on to embrace <a href="https://github.com/tektoncd/pipeline">Tekton Pipelines</a>, its sister project in the newly established <a href="https://cd.foundation/projects/">Continuous Delivery Foundation</a>. The two youngest <a href="https://cd.foundation/projects/">CDF projects</a> are building a Native K8s CD solution together.</p>
+
+<p>Tekton is an open source project that provides <a href="https://github.com/tektoncd/pipeline/blob/master/docs/README.md">100% K8s resources (CRDs) as a standard industry specification</a> for end-to-end CD pipelines. And <a href="https://jenkins-x.io/news/jenkins-x-next-gen-pipeline-engine/">Jenkins X has integrated Tekton</a> in what is quickly becoming the default way to execute Jenkins X CD pipelines - of course there will still be <a href="https://github.com/jenkins-x-apps/jx-app-jenkins">a <em>JVM Jenkins</em> <strong>engine</strong> available for traditional/non-native pipelines in Jenkins X</a>. But with Tekton (<a href="https://github.com/kubernetes/test-infra/pull/11888">backed by Prow</a>), as the pipeline execution engine, Jenkins X is now a truly <em>Native K8s CD</em> platform.</p>
+
+<h3 id="so-why-not-just-use-prow-and-tekton">So why not just use Prow and Tekton?<a href="#so-why-not-just-use-prow-and-tekton" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<p>There are <a href="https://jenkins-x.io/about/features/">too many Jenkins X features</a> to list each one and future posts will dive into some specifics of different features. But for today we will just leave it at a comparison of a <a href="#jenkins-x-pipelines"><strong>Jenkins X <code>jenkins-x.yml</code> Pipeline file</strong></a> versus the <a href="#tekton-crds-generated-by-jenkins-x"><strong>Tekton Pipeline CRDs that Jenkins X generates</strong></a>. In a future post - and as the Tekton integration and Tekton based Pipelines becomes more stable, I will explore the Jenkins X Pipelines and Tekton integration in more detail.</p>
+
+<h2 id="what-s-next-beyond-native-k8s-cd">What&rsquo;s Next &amp; Beyond <em>Native K8s CD</em><a href="#what-s-next-beyond-native-k8s-cd" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
+
+<h3 id="use-jenkins-x">Use Jenkins X<a href="#use-jenkins-x" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<blockquote>
+<p>How do we move from Jenkins to some kind of different CI/CD tool that can better manage these cloud-native primitives simpler and more effectively? &ndash; <em><a href="https://thenewstack.io/the-best-ci-cd-tool-for-kubernetes-doesnt-exist/">https://thenewstack.io/the-best-ci-cd-tool-for-kubernetes-doesnt-exist/</a></em></p>
+</blockquote>
+
+<p>The answer is simple - Jenkins X! You should <a href="https://jenkins-x.io/getting-started/">start using Jenkins X today</a> if you aren&rsquo;t already.</p>
+
+<h3 id="look-mom-no-server-serverless-applications-with-jenkins-x">Look Mom, No Server - Serverless Applications with Jenkins X<a href="#look-mom-no-server-serverless-applications-with-jenkins-x" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<p>Serverless applications/functions are the next evolution in software development and deployment - a shift from microservices to nanoservices. But just as it hasn&rsquo;t been easy for many organizations to shift their software delivery to a microservice architecture, it is an even bigger challenge to move to a nanoservices architecture with serverless functions. Jenkins X makes it much easier. API Gateways, service mesh, <a href="https://redmonk.com/jgovernor/2018/08/06/towards-progressive-delivery/">Progressive Delivery</a>, etc - they are all very complicated and challenging for most organizations to adopt - Jenkins X provides the same GitOps, ChatOps, etc for serverless functions as it has always provided for microservice applications. <a href="https://jenkins-x.io/developing/serverless-apps/">Jenkins X has OOTB support</a> for developing and deploying serverless functions/applications with <a href="https://github.com/knative/serving">Knative Serving</a> and <a href="https://github.com/solo-io/gloo">Gloo</a>. And Jenkins X does it in a cloud agnostic way - avoiding vendor lock-in. Getting started with serverless applications with Jenkins X is as easy as <code>jx create addon gloo</code>.
+<br>
+<br>
+In the next post of this series I will dive into nanoservices architecture and delivering serverless functions with Jenkins X. But if you don&rsquo;t wan to wait until then to learn more, I recommend that you read this <a href="https://blog.csanchez.org/2019/03/05/progressive-delivery-with-jenkins-x-automatic-canary-deployments/">post on Progresive Delivery with Jenkins X, Istio, Prometheus and Flagger</a> by Carlos Sanchez.
+<br>
+<br>
+<hr></p>
+
+<h4 id="jenkins-x-pipelines">Jenkins X Pipelines<a href="#jenkins-x-pipelines" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
+
+<p><strong><em><code>jenkins-x.yml</code></em></strong></p>
+
+<pre><code class="language-yaml">buildPack: none
+pipelineConfig:
+  pipelines:
+    release:
+      pipeline:
+        agent:
+          image: alpine
+        stages:
+          - name: A Working Stage
+            steps:
+              - command: echo
+                args:
+                  - hello
+                  - world
+              - command: ls
+          - name: Another stage
+            steps:
+              - command: echo
+                args: ['again']
+</code></pre>
+
+<h4 id="tekton-crds-generated-by-jenkins-x">Tekton CRDs Generated by Jenkins X<a href="#tekton-crds-generated-by-jenkins-x" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
+
+<p><strong><em>PipelineResource</em></strong></p>
+
+<pre><code class="language-yaml">items:
+- apiVersion: tekton.dev/v1alpha1
+  kind: PipelineResource
+  metadata:
+    creationTimestamp: null
+    name: kypseli-helloworld-nodejs-maste
+  spec:
+    params:
+    - name: revision
+      value: v0.0.8
+    - name: url
+      value: https://github.com/kypseli/helloworld-nodejs
+    type: git
+  status: {}
+metadata: {}
+</code></pre>
+
+<p><strong><em>Pipeline</em></strong></p>
+
+<pre><code class="language-yaml">apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  creationTimestamp: null
+  name: kypseli-helloworld-nodejs-maste
+  namespace: jx
+spec:
+  params:
+  - default: 0.0.8
+    description: the version number for this pipeline which is used as a tag on docker
+      images and helm charts
+    name: version
+  - default: &quot;1&quot;
+    description: the PipelineRun build number
+    name: build_id
+  resources:
+  - name: kypseli-helloworld-nodejs-maste
+    type: git
+  tasks:
+  - name: a-working-stage
+    params:
+    - name: version
+      value: ${params.version}
+    - name: build_id
+      value: ${params.build_id}
+    resources:
+      inputs:
+      - name: workspace
+        resource: kypseli-helloworld-nodejs-maste
+      outputs:
+      - name: workspace
+        resource: kypseli-helloworld-nodejs-maste
+    taskRef:
+      name: kypseli-helloworld-nodejs-maste-a-working-stage
+  - name: another-stage
+    params:
+    - name: version
+      value: ${params.version}
+    - name: build_id
+      value: ${params.build_id}
+    resources:
+      inputs:
+      - from:
+        - a-working-stage
+        name: workspace
+        resource: kypseli-helloworld-nodejs-maste
+      outputs:
+      - name: workspace
+        resource: kypseli-helloworld-nodejs-maste
+    runAfter:
+    - a-working-stage
+    taskRef:
+      name: kypseli-helloworld-nodejs-maste-another-stage
+status: {}
+</code></pre>
+
+<p><strong><em>Tasks</em></strong></p>
+
+<pre><code class="language-yaml">items:
+- apiVersion: tekton.dev/v1alpha1
+  kind: Task
+  metadata:
+    creationTimestamp: null
+    labels:
+      jenkins.io/task-stage-name: a-working-stage
+    name: kypseli-helloworld-nodejs-maste-a-working-stage
+    namespace: jx
+  spec:
+    inputs:
+      params:
+      - default: 0.0.8
+        description: the version number for this pipeline which is used as a tag on
+          docker images and helm charts
+        name: version
+      - default: &quot;1&quot;
+        description: the PipelineRun build number
+        name: build_id
+      resources:
+      - name: workspace
+        targetPath: workspace
+        type: git
+    outputs:
+      resources:
+      - name: workspace
+        targetPath: &quot;&quot;
+        type: git
+    steps:
+    - args:
+      - hello
+      - world
+      command:
+      - echo
+      env:
+      - name: DOCKER_REGISTRY
+        value: 10.47.252.4:5000
+      - name: PIPELINE_KIND
+        value: release
+      - name: REPO_OWNER
+        value: kypseli
+      - name: REPO_NAME
+        value: helloworld-nodejs
+      - name: JOB_NAME
+        value: kypseli/helloworld-nodejs/master
+      - name: APP_NAME
+        value: helloworld-nodejs
+      - name: BRANCH_NAME
+        value: master
+      - name: JX_BATCH_MODE
+        value: &quot;true&quot;
+      - name: VERSION
+        value: ${inputs.params.version}
+      - name: BUILD_ID
+        value: ${inputs.params.build_id}
+      - name: PREVIEW_VERSION
+        value: ${inputs.params.version}
+      image: alpine
+      name: step2
+      resources: {}
+      volumeMounts:
+      - mountPath: /etc/podinfo
+        name: podinfo
+        readOnly: true
+      workingDir: /workspace/workspace
+    - command:
+      - ls
+      env:
+      - name: DOCKER_REGISTRY
+        value: 10.47.252.4:5000
+      - name: PIPELINE_KIND
+        value: release
+      - name: REPO_OWNER
+        value: kypseli
+      - name: REPO_NAME
+        value: helloworld-nodejs
+      - name: JOB_NAME
+        value: kypseli/helloworld-nodejs/master
+      - name: APP_NAME
+        value: helloworld-nodejs
+      - name: BRANCH_NAME
+        value: master
+      - name: JX_BATCH_MODE
+        value: &quot;true&quot;
+      - name: VERSION
+        value: ${inputs.params.version}
+      - name: BUILD_ID
+        value: ${inputs.params.build_id}
+      - name: PREVIEW_VERSION
+        value: ${inputs.params.version}
+      image: alpine
+      name: step3
+      resources: {}
+      volumeMounts:
+      - mountPath: /etc/podinfo
+        name: podinfo
+        readOnly: true
+      workingDir: /workspace/workspace
+    volumes:
+    - downwardAPI:
+        items:
+        - fieldRef:
+            fieldPath: metadata.labels
+          path: labels
+      name: podinfo
+- apiVersion: tekton.dev/v1alpha1
+  kind: Task
+  metadata:
+    creationTimestamp: null
+    labels:
+      jenkins.io/task-stage-name: another-stage
+    name: kypseli-helloworld-nodejs-maste-another-stage
+    namespace: jx
+  spec:
+    inputs:
+      params:
+      - default: 0.0.8
+        description: the version number for this pipeline which is used as a tag on
+          docker images and helm charts
+        name: version
+      - default: &quot;1&quot;
+        description: the PipelineRun build number
+        name: build_id
+      resources:
+      - name: workspace
+        targetPath: &quot;&quot;
+        type: git
+    outputs:
+      resources:
+      - name: workspace
+        targetPath: &quot;&quot;
+        type: git
+    steps:
+    - args:
+      - again
+      command:
+      - echo
+      env:
+      - name: DOCKER_REGISTRY
+        value: 10.47.252.4:5000
+      - name: PIPELINE_KIND
+        value: release
+      - name: REPO_OWNER
+        value: kypseli
+      - name: REPO_NAME
+        value: helloworld-nodejs
+      - name: JOB_NAME
+        value: kypseli/helloworld-nodejs/master
+      - name: APP_NAME
+        value: helloworld-nodejs
+      - name: BRANCH_NAME
+        value: master
+      - name: JX_BATCH_MODE
+        value: &quot;true&quot;
+      - name: VERSION
+        value: ${inputs.params.version}
+      - name: BUILD_ID
+        value: ${inputs.params.build_id}
+      - name: PREVIEW_VERSION
+        value: ${inputs.params.version}
+      image: alpine
+      name: step2
+      resources: {}
+      volumeMounts:
+      - mountPath: /etc/podinfo
+        name: podinfo
+        readOnly: true
+      workingDir: /workspace/workspace
+    volumes:
+    - downwardAPI:
+        items:
+        - fieldRef:
+            fieldPath: metadata.labels
+          path: labels
+      name: podinfo
+metadata: {}
+</code></pre>
+
+<p><strong><em>PipelineRun</em></strong></p>
+
+<pre><code class="language-yaml">apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  creationTimestamp: null
+  labels:
+    branch: master
+    owner: kypseli
+    repo: helloworld-nodejs
+  name: kypseli-helloworld-nodejs-maste
+spec:
+  Status: &quot;&quot;
+  params:
+  - name: version
+    value: 0.0.8
+  - name: build_id
+    value: &quot;1&quot;
+  pipelineRef:
+    apiVersion: tekton.dev/v1alpha1
+    name: kypseli-helloworld-nodejs-maste
+  resources:
+  - name: kypseli-helloworld-nodejs-maste
+    resourceRef:
+      apiVersion: tekton.dev/v1alpha1
+      name: kypseli-helloworld-nodejs-maste
+  serviceAccount: tekton-bot
+  trigger:
+    type: manual
+status:
+  conditions: null
+</code></pre>
+
+
+
+
+
+  
+
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.css" integrity="sha256-sCl5PUOGMLfFYctzDW3MtRib0ctyUvI9Qsmq2wXOeBY=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/default-skin/default-skin.min.css" integrity="sha256-BFeI1V+Vh1Rk37wswuOYn5lsTcaU96hGaI7OUVCLjPc=" crossorigin="anonymous" />
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+</div>
+    </div>
+  </section>
+
+  
+<section class="section">
+  <div class="container">
+    <aside><div id="disqus_thread"></div></aside>
+    <script type="text/javascript">
+      var disqus_shortname = 'kurtmadel-com';
+      (function() {
+        
+        if (window.location.hostname == "localhost")
+            return;
+        
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+      <section class="section">
+      <div class="container has-text-centered">
+        <p>© 2019 Kurt Madel All Rights Reserved</p>
+      </div>
+    </section>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+    
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    <script src="/js/load-photoswipe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.js" integrity="sha256-UplRCs9v4KXVJvVY+p+RSo5Q4ilAUXh7kpjyIP5odyc=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe-ui-default.min.js" integrity="sha256-PWHOlUzc96pMc8ThwRIXPn8yH4NOLu42RQ0b9SpnpFk=" crossorigin="anonymous"></script>
+    
+  </body>
+</html>
+
+ 

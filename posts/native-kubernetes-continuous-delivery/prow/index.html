@@ -3,12 +3,16 @@
 <head>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-119704356-1', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-119704356-1', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 
 <meta charset="UTF-8">
@@ -174,7 +178,7 @@ ga('send', 'pageview');
     </div>
 </div>
 
-If you are doing CI and/or CD at scale and you aren&rsquo;t leveraging Native Kubernetes Continuous Delivery (Native K8s CD) then you are just <del>doing it wrong</del> <a href="../native-k8s-cd">missing out on a better way</a> - plain and simple. And if there is one Kubernetes project that has been at the forefront of Native K8s CD and best exemplifies the why and the how of what makes Kubernetes such an excellent platform for executing CI/CD at scale - it is Prow. <a href="https://github.com/kubernetes/test-infra/tree/master/prow">Prow</a> is a Native Kubernetes CI/CD system and as far as its name goes, Prow didn&rsquo;t go the Greek route for its K8s-themed name, rather it went the nautical route with <em>prow</em> meaning <strong><em>the portion of a ship&rsquo;s bow (the front end of a ship) above water</em></strong> - and Prow has been keeping K8s CI/CD above water for several years now. And others have taken notice, resulting in Prow becoming an important tool for a number of high-profile Kubernetes-centric projects. <a href="https://github.com/tektoncd/pipeline/blob/master/infra/prow/config.yaml">Prow</a> is an important tool in the toolbox of another Native K8s CD project called <a href="https://tekton.dev/">Tekton</a>, going the Greek route for its name which means carpenter, that I wrote about in a <a href="../native-k8s-cd/tekton-standardizing-native-kubernetes-cd/">previous post of this Native K8s CD series</a>. Tekton, along with a number of other important K8s projects, use Prow for their own CI/CD automation even though there are a number of other options. So what exactly is Prow and why should you care? Before we dive into that, I believe it is important to understand the origin and evolution of Prow to provide additional insight into why K8s is such an excellent platform for CI/CD.</p>
+If you are doing CI and/or CD at scale and you aren&rsquo;t leveraging Native Kubernetes Continuous Delivery (Native K8s CD) then you are just <del>doing it wrong</del> <a href="../native-k8s-cd">missing out on a better way</a> - plain and simple. And if there is one Kubernetes project that has been at the forefront of Native K8s CD and best exemplifies the why and the how of what makes Kubernetes such an excellent platform for executing CI/CD at scale - it is Prow. <a href="https://github.com/kubernetes/test-infra/tree/master/prow">Prow</a> is a Native Kubernetes CI/CD system and as far as its name goes, Prow didn&rsquo;t go the Greek route for its K8s-themed name, rather it went the nautical route with <em>prow</em> meaning <strong><em>the portion of a ship&rsquo;s bow (the front end of a ship) above water</em></strong> - and Prow has been keeping K8s CI/CD above water for several years now. And others have taken notice, resulting in Prow becoming an important tool for a number of high-profile Kubernetes-centric projects. <a href="https://github.com/tektoncd/pipeline/blob/master/infra/prow/config.yaml">Prow</a> is an important tool in the toolbox of another Native K8s CD project called <a href="https://tekton.dev/">Tekton</a>, going the Greek route for its name which means carpenter, that I wrote about in a <a href="../tekton-standardizing-native-kubernetes-cd/">previous post of this Native K8s CD series</a>. Tekton, along with a number of other important K8s projects, use Prow for their own CI/CD automation even though there are a number of other options. So what exactly is Prow and why should you care? Before we dive into that, I believe it is important to understand the origin and evolution of Prow to provide additional insight into why K8s is such an excellent platform for CI/CD.</p>
 
 <h2 id="where-did-prow-come-from">Where did Prow come from?<a href="#where-did-prow-come-from" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
 
@@ -331,7 +335,7 @@ Configuring Prow for your own GitHub Organization/Repository is based on a <a hr
 <ul>
 <li>Knative - not only <a href="https://github.com/kubernetes/test-infra/tree/master/prow/cmd/build">provides one of the CI/CD job execution engines for Prow</a>, it also <a href="https://github.com/knative/test-infra/tree/master/ci/prow">uses Prow for its own CI</a>.</li>
 <li>Tekton - currently <a href="https://github.com/tektoncd/pipeline/tree/master/infra/prow">using Prow to build and test Tekton Pipeline</a>.</li>
-<li>Jenkins X - <a href="https://github.com/jenkins-x/prow-config">uses Prow for its own CI/CD</a>. But it also takes Prow usage to a whole other level by <a href="https://github.com/jenkins-x/jx/tree/master/pkg/prow">seamlessly integrating Prow with the original Serverless Jenkins X and now for Jenkins X with Tekton</a> - more about this in the next post.</li>
+<li>Jenkins X - <a href="https://github.com/jenkins-x/prow-config">uses Prow for its own CI/CD</a>. But it also takes Prow usage to a whole other level by <a href="https://github.com/jenkins-x/jx/tree/master/pkg/prow">seamlessly integrating Prow with the original Serverless Jenkins X and now for Jenkins X with Tekton</a> - <a href="../jenkins-x-goes-native/">more about this in the next post</a>.</li>
 <li>Istio - the service mesh used by Knative to support continuous deployment (among others of course), <a href="https://github.com/istio/test-infra/pull/253">integrated Prow early on its existence</a>.</li>
 </ul>
 
@@ -356,7 +360,7 @@ Configuring Prow for your own GitHub Organization/Repository is based on a <a hr
 <li>I would like to see Prow become a <a href="https://cd.foundation/">Continuous Delivery Foundation</a> project.</li>
 </ul>
 
-<p>Most of all, I want to see you keep your own CI/CD above water <a href="(https://github.com/kubernetes/test-infra/blob/master/prow/getting_started_deploy.md)">by using Prow for your own GitHub automation</a>. But before you do that, you may want to wait for my next post in this series where I will explain how effortless it can be for you to realize the advantages of Prow for your own applications by using Jenkins X for your CI/CD.</p>
+<p>Most of all, I want to see you keep your own CD above water <a href="(https://github.com/kubernetes/test-infra/blob/master/prow/getting_started_deploy.md)">by using Prow for your own GitHub automation</a>. But before you do that, you may want to wait for my <a href="../jenkins-x-goes-native/">next post in this series</a> where I will explain how effortless it can be for you to realize the advantages of Prow for your own application delivery by using Jenkins X for your CD.</p>
 </div>
     </div>
   </section>

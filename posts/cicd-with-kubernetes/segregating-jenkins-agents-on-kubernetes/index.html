@@ -3,12 +3,16 @@
 <head>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-119704356-1', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-119704356-1', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 
 <meta charset="UTF-8">
@@ -112,17 +116,10 @@ ga('send', 'pageview');
 <p>Kubernetes provides <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/"><code>Namespaces</code></a> to allow the segregation of  Kubernetes objects within the same cluster. Additionally, many Kubernetes solutions have a concept of <code>node pools</code>. A <code>node pool</code> is a group of Kubernetes <code>nodes</code> with the same characteristics - such as the same instance type. Kops refers to <code>node pools</code> as <a href="https://github.com/kubernetes/kops/blob/master/docs/instance_groups.md"><code>InstanceGroups</code></a> and for AWS they are backed by AWS Autoscaling Groups (ASG) where all the <code>nodes</code> in an <code>InstanceGroup</code> would be of the same EC2 instance type in addition to other defined characteristics. Kops provides the ability to create as many <code>node pools</code> (or <code>InstanceGroups</code>) as makes sense for your cluster - as does the Google Kubernetes Engine (GKE). To achieve the segregation between Jenkins masters and agents, we are going to create separate <code>Namespaces</code> and <code>node pools</code> that are individually specific to Jenkins masters and agents. This will result in all Jenkins agent <code>Pods</code> being on agent dedicated <code>nodes</code> and being isolated from <code>nodes</code> with Jenkins masters or other workloads on your Kubernetes cluster.</p>
 
 <p>The following diagram illustrates the use of two <code>namespaces</code> and two <code>InstanceGroups</code> for Jenkins masters and agents:
-
 <figure>
-    
-        <img src="k8s-cluster-node-selector.png" />
-    
-    
-    <figcaption>
-        <h4>Kubernetes Jenkins Agent Segregation Diagram</h4>
-        
-    </figcaption>
-    
+    <img src="k8s-cluster-node-selector.png"/> <figcaption>
+            <h4>Kubernetes Jenkins Agent Segregation Diagram</h4>
+        </figcaption>
 </figure>
 </p>
 

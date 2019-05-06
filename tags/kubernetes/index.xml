@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2019 Kurt Madel All Rights Reserved</copyright>
-    <lastBuildDate>Mon, 15 Apr 2019 06:00:15 -0400</lastBuildDate>
+    <lastBuildDate>Mon, 06 May 2019 04:10:15 -0400</lastBuildDate>
     
 	<atom:link href="https://kurtmadel.com/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Jenkins X Goes Native</title>
+      <link>https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/jenkins-x-goes-native/</link>
+      <pubDate>Mon, 06 May 2019 04:10:15 -0400</pubDate>
+      
+      <guid>https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/jenkins-x-goes-native/</guid>
+      <description>In two of the previous posts of this series I wrote about two Native Kubernetes Continuous Delivery (Native K8s CD) solutions - Tekton and Prow. In this post we will explore how Jenkins X uses both of these for its own CD, but more importantly how Jenkins X has seamlessly integrated both of these Native K8s CD platforms (among numerous others) into one easily consumable package making it incredibly easy for any CD practitioner to implement and execute best-of-breed Native K8s CD.</description>
+    </item>
     
     <item>
       <title>Prow: Keeping Kubernetes CI/CD Above Water</title>
