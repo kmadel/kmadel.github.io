@@ -7,7 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2019 Kurt Madel All Rights Reserved</copyright>
-    <lastBuildDate>Mon, 06 May 2019 04:10:15 -0400</lastBuildDate>
+    <lastBuildDate>Tue, 02 Jul 2019 08:09:15 -0400</lastBuildDate>
     
 	<atom:link href="https://kurtmadel.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -15,7 +15,7 @@
     <item>
       <title>CD</title>
       <link>https://kurtmadel.com/tags/cd/</link>
-      <pubDate>Mon, 06 May 2019 04:10:15 -0400</pubDate>
+      <pubDate>Tue, 02 Jul 2019 08:09:15 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/cd/</guid>
       <description></description>
@@ -24,9 +24,54 @@
     <item>
       <title>CI</title>
       <link>https://kurtmadel.com/tags/ci/</link>
-      <pubDate>Mon, 06 May 2019 04:10:15 -0400</pubDate>
+      <pubDate>Tue, 02 Jul 2019 08:09:15 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/ci/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>DinD</title>
+      <link>https://kurtmadel.com/tags/dind/</link>
+      <pubDate>Tue, 02 Jul 2019 08:09:15 -0400</pubDate>
+      
+      <guid>https://kurtmadel.com/tags/dind/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Kubernetes</title>
+      <link>https://kurtmadel.com/tags/kubernetes/</link>
+      <pubDate>Tue, 02 Jul 2019 08:09:15 -0400</pubDate>
+      
+      <guid>https://kurtmadel.com/tags/kubernetes/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>containers</title>
+      <link>https://kurtmadel.com/tags/containers/</link>
+      <pubDate>Tue, 02 Jul 2019 08:09:15 -0400</pubDate>
+      
+      <guid>https://kurtmadel.com/tags/containers/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kaniko</title>
+      <link>https://kurtmadel.com/tags/kaniko/</link>
+      <pubDate>Tue, 02 Jul 2019 08:09:15 -0400</pubDate>
+      
+      <guid>https://kurtmadel.com/tags/kaniko/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>security</title>
+      <link>https://kurtmadel.com/tags/security/</link>
+      <pubDate>Tue, 02 Jul 2019 08:09:15 -0400</pubDate>
+      
+      <guid>https://kurtmadel.com/tags/security/</guid>
       <description></description>
     </item>
     
@@ -36,15 +81,6 @@
       <pubDate>Mon, 06 May 2019 04:10:15 -0400</pubDate>
       
       <guid>https://kurtmadel.com/tags/jenkins-x/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Kubernetes</title>
-      <link>https://kurtmadel.com/tags/kubernetes/</link>
-      <pubDate>Mon, 06 May 2019 04:10:15 -0400</pubDate>
-      
-      <guid>https://kurtmadel.com/tags/kubernetes/</guid>
       <description></description>
     </item>
     

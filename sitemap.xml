@@ -4,13 +4,77 @@
   
   <url>
     <loc>https://kurtmadel.com/tags/cd/</loc>
-    <lastmod>2019-05-06T04:10:15-04:00</lastmod>
+    <lastmod>2019-07-02T08:09:15-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://kurtmadel.com/tags/ci/</loc>
-    <lastmod>2019-05-06T04:10:15-04:00</lastmod>
+    <lastmod>2019-07-02T08:09:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/dind/</loc>
+    <lastmod>2019-07-02T08:09:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/kubernetes/</loc>
+    <lastmod>2019-07-02T08:09:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/</loc>
+    <lastmod>2019-07-02T08:09:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/series/native-kubernetes-continuous-delivery/</loc>
+    <lastmod>2019-07-02T08:09:15-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/posts/</loc>
+    <lastmod>2019-07-02T08:09:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/building-container-images-with-kubernetes/</loc>
+    <lastmod>2019-07-02T08:09:15-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/series/</loc>
+    <lastmod>2019-07-02T08:09:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/</loc>
+    <lastmod>2019-07-02T08:09:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/containers/</loc>
+    <lastmod>2019-07-02T08:09:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/kaniko/</loc>
+    <lastmod>2019-07-02T08:09:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/security/</loc>
+    <lastmod>2019-07-02T08:09:15-04:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -26,48 +90,13 @@
   </url>
   
   <url>
-    <loc>https://kurtmadel.com/tags/kubernetes/</loc>
-    <lastmod>2019-05-06T04:10:15-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://kurtmadel.com/</loc>
-    <lastmod>2019-05-06T04:10:15-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://kurtmadel.com/tags/native-k8s-cd/</loc>
     <lastmod>2019-05-06T04:10:15-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://kurtmadel.com/series/native-kubernetes-continuous-delivery/</loc>
-    <lastmod>2019-05-06T04:10:15-04:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://kurtmadel.com/posts/</loc>
-    <lastmod>2019-05-06T04:10:15-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://kurtmadel.com/tags/prow/</loc>
-    <lastmod>2019-05-06T04:10:15-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://kurtmadel.com/series/</loc>
-    <lastmod>2019-05-06T04:10:15-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://kurtmadel.com/tags/</loc>
     <lastmod>2019-05-06T04:10:15-04:00</lastmod>
     <priority>0</priority>
   </url>

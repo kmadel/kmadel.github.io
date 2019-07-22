@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-119704356-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="" name="keywords">
+<meta content="Securely Building Container Images on Kubernetes - Kurt Madel" property="og:title">
+<title>Securely Building Container Images on Kubernetes | Kurt Madel</title>
+<link rel="stylesheet" href="https://kurtmadel.com/css/style.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" integrity="sha256-Zd1icfZ72UBmsId/mUcagrmN7IN5Qkrvh75ICHIQVTk=" crossorigin="anonymous" />
+
+<link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+</head>
+
+<body>
+  <section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://kurtmadel.com/"><h1 class="title is-4">Kurt Madel</h1></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://www.linkedin.com/in/kurt-madel-2304a6a/">
+            <span class="icon">
+              <i class="fa fa-linkedin"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://github.com/kmadel">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/kmadel">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+    <h2 class="subtitle">Random thoughts on technology and other stuff...</h2>
+  </div>
+</section>
+
+  <section class="section single">
+    <div class="container">
+      <h2 class="subtitle is-6">July 2, 2019</h2>
+      <h2 class="subtitle"><a href="/series/native-kubernetes-continuous-delivery">Native Kubernetes Continuous Delivery</a>  Part 5</h2>
+      <h1 class="title">Securely Building Container Images on Kubernetes</h1>
+      
+      <div class="box">
+        <figure class="series-photo" itemprop="associatedMedia" itemscope="" itemtype="http://schema.org/ImageObject">
+          <div class="img">
+            <img itemprop="thumbnail" src="/photos/native-kubernetes-continuous-delivery/secure-containers.jpg" alt="SONY RX-100 ISO 125 37.1mm ƒ/5.6 1/160">
+          </div>
+          <a href="/photos/native-kubernetes-continuous-delivery/secure-containers.jpg" itemprop="contentUrl"></a>
+          <figcaption>Square Tower House, Ancient Pueblo Dwelling, Mesa Verde National Park, CO<br>Photograph by Kurt Madel ©2019</figcaption>
+        </figure>
+      </div>
+      
+      
+      <div class="tags">
+    
+        <a class="button is-link" href="/tags/kubernetes">Kubernetes</a>
+    
+        <a class="button is-link" href="/tags/ci">CI</a>
+    
+        <a class="button is-link" href="/tags/cd">CD</a>
+    
+        <a class="button is-link" href="/tags/dind">DinD</a>
+    
+        <a class="button is-link" href="/tags/security">security</a>
+    
+        <a class="button is-link" href="/tags/kaniko">kaniko</a>
+    
+        <a class="button is-link" href="/tags/containers">containers</a>
+    
+</div>
+
+      
+      <div class="content">
+
+<p>Back in 2013, <a href="https://kubernetes.io/blog/2015/04/borg-predecessor-to-kubernetes/">before Kubernetes was a thing</a>, Docker was making Linux containers (LXC) much more accessible and use of Docker based containers took off (and <a href="https://blog.docker.com/2014/03/docker-0-9-introducing-execution-drivers-and-libcontainer/">Docker quickly dropped LXC as the default execution engine for their own container runtime</a>). At the same time continuous integration (CI) was rapidly maturing as a best practice and a necessity for efficient software delivery. The use of Docker containers with CI was quickly adopted as the best way to manage CI tools - compilers, testing tools, security scans, etc. But it was new and there weren&rsquo;t a lot of best practices defined - it was more like &lsquo;go figure it out&rsquo;. And early on one very important aspect of using containers for CI/CD was using containers to build container images and pushing those images to container registries - but again, this was all very new, and a lot of people didn&rsquo;t really know what they were doing and there wasn&rsquo;t a <em>Building Container Images for Dummies</em>.</p>
+
+<p>Fast forward a couple of years to September of 2015 when Jérôme Petazzoni published an article entitled <a href="https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/">&ldquo;Using Docker-in-Docker for your CI or testing environment? Think twice.&rdquo;</a> The article basically describes how using <a href="https://github.com/jpetazzo/dind">Docker-in-Docker (DinD)</a> is bad choice for a CI/CD workload for a number of different reasons - it is definitely an article still worth a read. He promoted the concept of mounting the Docker socket of the host machine running the Docker daemon and using the host Docker daemon to execute Docker commands in your CI/CD jobs. Mounting the <code>/var/run/docker.sock</code> file as a volume in a Docker container allows you to accomplish similar functionality to DinD, but without some of the drawbacks of DinD -  to include layer caching and requiring running DinD containers with <a href="https://blog.docker.com/2013/09/docker-can-now-run-within-docker/"><code>--privileged</code> mode</a> enabled. In Part 5 of <a href="/series/native-kubernetes-continuous-delivery/">this series on Native Kubernetes Continuous Delivery</a> we will explore why it is no longer a best practice to use either of these two approaches for building and pushing container images as part of your Native Kubernetes Continuous Delivery pipelines. We will look at this from two different perspectives: security and performance. Finally, we will take a look at an alternative approach with security and performance in mind.</p>
+
+<h2 id="container-images-vs-docker-images">Container Images vs Docker Images<a href="#container-images-vs-docker-images" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
+
+<p>Before we dive into securely building and pushing container images on Kubernetes I wanted to share some thoughts on container terminology. I typically refer to an image that you run as a container in a Kubernetes Pod as a <strong>Container Image</strong> instead of a <strong>Docker Image</strong>. Back in 2015, Docker was kind enough to <a href="https://blog.docker.com/2017/07/oci-release-of-v1-0-runtime-and-image-format-specifications/">donate the Docker image format</a> to the then newly established <a href="https://www.opencontainers.org/">Open Container Initiative (OCI)</a> - in addition to the container <a href="https://github.com/opencontainers/image-spec/blob/master/spec.md">Image Specification</a>, the OCI also maintains an open <a href="https://github.com/opencontainers/runtime-spec/blob/master/spec.md">Runtime Specification</a> for container execution. That makes Docker <em>no-longer-required</em> for running containers and pulling container images - and, as you will see later in this post, even building and pushing container images.</p>
+
+<h2 id="what-s-wrong-with-docker-in-docker-dind">What&rsquo;s Wrong with Docker-in-Docker (DinD)<a href="#what-s-wrong-with-docker-in-docker-dind" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
+
+<p>Again, to understand the drawbacks of using DinD to build and push container images I recommend that you read <a href="https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/">Jérôme Petazzoni&rsquo;s article</a>. But here is a quick summary:</p>
+
+<ul>
+<li>Security - The DinD container must run with <code>--privileged</code> flag enabled, resulting in undesirable attack vectors against the underlying Docker host.</li>
+<li>Performance - Layer caching is not shared across builds when using ephemeral DinD containers. All layers of all images must be pulled every time a new DinD container is used, resulting in much slower container image builds.</li>
+</ul>
+
+<h2 id="what-s-wrong-with-mounting-the-docker-socket">What&rsquo;s Wrong with Mounting the Docker Socket<a href="#what-s-wrong-with-mounting-the-docker-socket" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
+
+<p>So we have established that using DinD for CI/CD, especially for building and pushing container images, is a bad idea. But for Kubernetes CD you should also think twice if you are mounting the Docker socket for CI/CD - to include building and pushing container images.</p>
+
+<h3 id="performance">Performance<a href="#performance" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<p>Let’s put security aside for a moment - it turns out that mounting the Docker socket has significant issues in a Kubernetes based CD environment. A Kubernetes cluster is made up of one or more worker nodes, and it is on these worker nodes where Kubernetes schedules and runs <a href="https://kubernetes.io/docs/concepts/workloads/pods/pod/">Pods</a>. When you mount the Docker socket to a Pod you are mounting the <code>/var/run/docker.sock</code> file into every container that makes up your Pod. When those containers run Docker commands against that socket they are actually being executed directly by the Docker daemon running as <strong>root</strong> on the worker node where the Pod was scheduled. The Kubernetes scheduler has no way to track that these other containers are running - they aren’t managed by Kubernetes, rather they are managed by the Docker daemon running on the node where the Pod gets scheduled. This may result in serious Kubernetes scheduling issues, especially on busy CD clusters. And one of the main reasons to use Kubernetes in the first place is because of its robust orchestration and scheduling capabilities of containers, so why would you want to circumvent that for your CI/CD?</p>
+
+<p>Another performance issue is container image layer caching. If you depend on the built-in caching provided by the Docker daemon then you may end up on different K8s nodes for different builds of the same container image or other container images that share layers - thus negating the caching provided by the Docker daemon on a specific K8s worker node.</p>
+
+<p>Additionally, any layers that are stored on the host and any logs generated by the containers running via the Docker socket will not be automatically cleaned up for you.</p>
+
+<h3 id="security">Security<a href="#security" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<p>In simplistic terms, increased security goes hand in hand with reducing the attack surface or attack vectors. It is no different with CD on Kubernetes. If the Docker socket is exposed to a CD job then a curious/malicious developer can modify the job to run Docker commands as build steps, potentially becoming <code>root</code> on the node where that job lands. If they gain access to the underlying host as <code>root</code>, there are reasonably straightforward methods to escalate privileges and gain access to the entire Kubernetes cluster. Many cluster operators don&rsquo;t have the proper monitoring in place to properly detect this kind of activity and separate it from legitimate CD job runs, so the exploitation is likely to go unnoticed for a while.</p>
+
+<p><strong>DinD</strong> has always <a href="https://blog.docker.com/2013/09/docker-can-now-run-within-docker/">required that the <code>--privileged</code> flag be enabled for the container running DinD</a> - and this has always been considered insecure. But mounting the Docker socket has never been any more secure, and has relied on the use of dedicated Docker daemon instances to isolate CI/CD workloads from other container workloads - like production applications for example.</p>
+
+<p>While this is high on the <strong>bad</strong> scale for a single-purpose cluster just doing CI/CD, it is extremely high on the <strong>bad</strong> scale for a K8s cluster with multiple workloads that should have isolation - the isolation you should expect from containers running on K8s. For example, your <strong>Production</strong> containers may be just a namespace away from the namespace where your CD job is running.</p>
+
+<p>If you go down this path, the net result is <em>anyone who can modify a CD job has a way to become root for the entire cluster</em>.</p>
+
+<h2 id="block-the-use-of-dind-and-the-docker-socket-for-k8s-cd-pods">Block the Use of DinD and the Docker Socket for K8s CD Pods<a href="#block-the-use-of-dind-and-the-docker-socket-for-k8s-cd-pods" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
+
+<p>For some, the drawbacks of mounting the Docker socket for CD on Kubernetes are significant enough that they <a href="https://applatix.com/case-docker-docker-kubernetes-part-2/">recommended going back to DinD</a>. But we have already dismissed both <strong>DinD</strong> and mounting the Docker socket as acceptable approaches for CD on Kubernetes. Before we look at an alternative we will explore K8s features that allow you to block the use of DinD and the mounting of the Docker socket for all containers running on your K8s cluster (or part of your cluster).</p>
+
+<p>By using Kubernetes for dynamic ephemeral CD executors you can run each of your CD steps directly in containers built specifically and singularly for the purpose of executing that step or step(s), all within a <a href="https://kubernetes.io/docs/concepts/workloads/pods/pod/">Pod</a> managed by Kubernetes. In addition to orchestrating the scheduling and running of these CD Pods - K8s also allows managing other aspects of these Pods&rsquo; lifecycles to include security sensitive aspects of the pod specification that enable fine-grained authorization of pod creation and updates. A native K8s solution for managing pod security is the <a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podsecuritypolicy">Pod Security Policy Admission Controller</a>. A Pod Security Policy (PSP) may be configured in such a way that a container running in a Pod using a correctly configured policy won&rsquo;t be scheduled if it is configured to mount the Docker socket and won&rsquo;t be allowed to run as a <code>--privileged</code> container - disabling DinD.</p>
+
+<h3 id="use-pod-security-policies-to-block-dind-and-mounting-the-docker-socket">Use Pod Security Policies to Block DinD and Mounting the Docker Socket<a href="#use-pod-security-policies-to-block-dind-and-mounting-the-docker-socket" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<p>The Pod Security Policy Admission Controller is a <a href="https://kubernetes.io/blog/2018/07/18/11-ways-not-to-get-hacked/#6-use-linux-security-features-and-podsecuritypolicies">critical feature for enhancing the security of your K8s cluster</a>. The Pod Security Policy Admission Controller allows you to specify Pod Security Policies that limit what containers are allowed to do - if a container in a Pod is configured to do something that is not allowed by the Pod Security Policy then K8s will not schedule the Pod.</p>
+
+<blockquote>
+<p><a href="https://kubernetes.io/docs/concepts/policy/pod-security-policy/#what-is-a-pod-security-policy">From the Kubernetes official docs</a>: <em>A Pod Security Policy is a cluster-level resource that controls security sensitive aspects of the pod specification. The PodSecurityPolicy objects define a set of conditions that a pod must run with in order to be accepted into the system, as well as defaults for the related fields</em></p>
+</blockquote>
+
+<p>Let&rsquo;s look at some specific settings that will greatly reduce the <em>attack</em> surface thus mitigating risk:</p>
+
+<ul>
+<li><code>privileged</code>: set to <code>false</code> will disallow the use of DinD.</li>
+<li><code>runAsUser</code>: set this to <code>MustRunAsNonRoot</code> so containers can&rsquo;t run as the <code>ROOT</code> user.</li>
+</ul>
+
+<blockquote>
+<p>NOTE: You will need to allow <code>USER root</code> to actually do anything meaningful with Kaniko to build and push container image, so you will most likely need to set <code>runAsUser</code> to <code>RunAsAny</code>. The goal with a Kaniko PSP is to reduce other available attack vectors.</p>
+</blockquote>
+
+<ul>
+<li><code>allowPrivilegeEscalation</code>: disable privilege escalation so that no child process of a container can gain more privileges than its parent.</li>
+<li><code>volumes</code>: Don&rsquo;t allow mounting host directories/files as volumes by specifying <a href="https://kubernetes.io/docs/concepts/storage/volumes/">specific volume types</a> and not allowing the <code>hostPath</code> volume for any CD containers. This will disable the ability to mount the Docker socket.</li>
+<li>PSP <code>annotations</code>: confine all Pod containers to the <code>runtime/default</code> <strong>seccomp</strong> profile via the <code>seccomp.security.alpha.kubernetes.io/defaultProfileName</code> annotation and don&rsquo;t set the <code>seccomp.security.alpha.kubernetes.io/allowedProfileNames</code> so the default cannot be changed.</li>
+</ul>
+
+<p>Here is an example of a restrictive <strong>PSP</strong> that won&rsquo;t allow <strong>mounting the Docker socket</strong> and won&rsquo;t allow <strong>DinD</strong>:</p>
+
+<pre><code class="language-yaml">apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: cd-restricted
+  annotations:
+    seccomp.security.alpha.kubernetes.io/defaultProfileName:  'runtime/default'
+    apparmor.security.beta.kubernetes.io/defaultProfileName:  'runtime/default'
+spec:
+  privileged: false
+  # Required to prevent escalations to root.
+  allowPrivilegeEscalation: false
+  # This is redundant with non-root + disallow privilege escalation,
+  # but we can provide it for defense in depth.
+  requiredDropCapabilities:
+    - ALL
+  # Allow core volume types. But more specifically, don't allow mounting host volumes to include the Docker socket - '/var/run/docker.sock'
+  volumes:
+    - 'configMap'
+    - 'emptyDir'
+    - 'projected'
+    - 'secret'
+    - 'downwardAPI'
+    # Assume that persistentVolumes set up by the cluster admin are safe to use.
+    - 'persistentVolumeClaim'
+  hostNetwork: false
+  hostIPC: false
+  hostPID: false
+  runAsUser:
+    # Don't allow containers to run as ROOT
+    rule: 'MustRunAsNonRoot'
+  seLinux:
+    # This policy assumes the nodes are using AppArmor rather than SELinux.
+    rule: 'RunAsAny'
+  supplementalGroups:
+    rule: 'MustRunAs'
+    ranges:
+      # Forbid adding the root group.
+      - min: 1
+        max: 65535
+  fsGroup:
+    rule: 'MustRunAs'
+    ranges:
+      # Forbid adding the root group.
+      - min: 1
+        max: 65535
+  readOnlyRootFilesystem: false
+</code></pre>
+
+<blockquote>
+<p><strong>NOTE</strong>: At the time this post was published <a href="https://cloud.google.com/kubernetes-engine/docs/how-to/pod-security-policies">GKE has beta support for Pod Security Polices</a>, <a href="https://docs.microsoft.com/en-us/azure/aks/use-pod-security-policies">AKS introduced preview support for Pod Security Policies in April</a> and <a href="https://docs.aws.amazon.com/eks/latest/userguide/pod-security-policy.html">EKS added Pod Security Polices as a default feature with their support for K8s 1.13 (also new 1.12 EKS clusters will include support for Pod Security Policies)</a>.</p>
+</blockquote>
+
+<h3 id="don-t-run-docker">Don&rsquo;t Run Docker<a href="#don-t-run-docker" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<p>Another compelling way to not allow DinD or mounting the Docker Socket is to not use Docker as the container runtime for your K8s cluster.
+<a href="https://containerd.io/"><strong>containerd</strong></a> is an implementation of the OCI image runtime mentioned above  (<a href="https://blog.docker.com/2017/03/docker-donates-containerd-to-cncf/">also donated by Docker to the CNCF</a>) and is (at the time of this post) <a href="https://cloud.google.com/kubernetes-engine/docs/concepts/using-containerd">supported by the Google Kubernetes Engine (GKE)</a> - <em>but no other major cloud providers</em>. By using the OCI run spec provided by <strong>containerd</strong>, you don&rsquo;t actually need Docker - and you will actually see better performance for your K8s containers with <strong>containerd</strong> because Docker actually uses <strong>containerd</strong> under the covers - so to speak - resulting in an extra daemon and unnecessary communication overhead. One interesting aspect of <strong>containerd</strong> is that it is only a runtime for containers - it does not support building container images. But a big plus of <strong>containerd</strong>, besides better performance, is that it makes it impossible to use <strong>DinD</strong> or mount the Docker socket - thus providing a more secure container runtime. But how do you build container images without Docker?</p>
+
+<h2 id="building-container-images-without-docker">Building Container Images without Docker<a href="#building-container-images-without-docker" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
+
+<p>Or more specifically, building container images without the Docker <strong>daemon</strong> - no <strong>DinD</strong>, no Docker socket. But we still want to leverage K8s managed containers for CD, to include building and pushing container images. How do we do that?</p>
+
+<h3 id="enter-kaniko">Enter Kaniko<a href="#enter-kaniko" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+
+<p>Kaniko is a tool that is capable of building and pushing container images without the Docker daemon, but it does have one major drawback from a security perspective: to build anything useful/easily you must run as the <code>root</code> <code>USER</code> in the Kaniko container.</p>
+
+<blockquote>
+<p><a href="https://github.com/GoogleContainerTools/kaniko#security"><strong>From Kaniko&rsquo;s docs</strong></a>: If you have a minimal base image (SCRATCH or similar) that doesn&rsquo;t require permissions to unpack, and your Dockerfile doesn&rsquo;t execute any commands as the root user, you can run Kaniko without root permissions. It should be noted that Docker runs as root by default, so you still require (in a sense) privileges to use Kaniko.</p>
+
+<p>You may be able to achieve the same default seccomp profile that Docker uses in your Pod by setting seccomp profiles with annotations on a PodSecurityPolicy to create or update security policies on your cluster.</p>
+</blockquote>
+
+<p>As we already mentioned above, running as <code>root</code> is an attack vector that many consider to be an unacceptable security hole - but the use of Pod Security Policies will reduce the attack surface of the Kaniko container running as part of a K8s Pod and provides greater security than the Docker based approaches we have already dismissed.</p>
+
+<h4 id="basic-configuration-for-kaniko-with-pod-security-policies">Basic Configuration for Kaniko with Pod Security Policies<a href="#basic-configuration-for-kaniko-with-pod-security-policies" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
+
+<p>The following configuration assumes that you have a K8 cluster up and running, and that you have access to <code>kubectl</code> to add and modify K8s resources.</p>
+
+<ol>
+<li><strong>Container registry</strong>: I recommend having a staging or sandbox container registry that Kaniko pushes images to, and a production registry that Kaniko does not have access to push to. A separately managed and secured CD job should be used to promote container images from staging to production once required tests/scans/policies have been successfully run against that container image. But of course the Kaniko container image itself (and any other container images used by CD jobs) should always be pulled from the production container registry.</li>
+<li><code>PodSecurityPolicy</code>: Once the PodSecurityPolicy admission controller is enabled you will need at least 2 PodSecurityPolicies (acutally you will want to defined and apply all of your Pod Security Policies before enabling the admission controller, not doing so will prevent any pods from being created in the cluster):
+
+<ol>
+<li>The most restrictive policy possible for executing a build and push with Kaniko - the only change to the PSP above is to change <code>runAsUser</code> to <code>RunAsAny</code> to allow using the ROOT user in Dockerfiles to be built by Kaniko.</li>
+<li>A <a href="https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/policy/privileged-psp.yaml">privileged policy</a> that is equivalent to not using the Pod Security admission controller for Pods that use it.</li>
+</ol></li>
+<li><code>Namespace</code>, <code>Service Account</code>, <code>Role</code>, <code>RoleBinding</code>: a PodSecurityPolicy is applied to a K8s <code>Role</code> that is then bound to a <code>ServiceAccount</code> via a <code>RoleBinding</code>. I recommend creating a <code>ServiceAccount</code> bound to a <code>Role</code> with a restrictive PodSecurityPolicy specifically for Kaniko/CD jobs.</li>
+</ol>
+
+<h4 id="kaniko-with-gcp-gke-and-gcr">Kaniko with GCP, GKE and GCR<a href="#kaniko-with-gcp-gke-and-gcr" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
+
+<p>Kaniko is a Google sponsored project, so naturally there is good support for using Kaniko with a GKE cluster. I <a href="https://github.com/GoogleContainerTools/kaniko#running-kaniko-in-a-kubernetes-cluster">defer to the Kaniko instructions for GKE + GCR</a>.</p>
+
+<p><a href="https://cloud.google.com/kubernetes-engine/docs/how-to/pod-security-policies">Using Pod Security Policies with GKE.</a></p>
+
+<h4 id="kaniko-with-aws-eks-and-ecr">Kaniko with AWS, EKS and ECR<a href="#kaniko-with-aws-eks-and-ecr" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
+
+<p>The Kaniko instructions tell you to create a Kubernetes secret with your <code>~/.aws/credentials</code> to push container images to the ECR, but most organizations don&rsquo;t allow you to use AWS credentials this way. Here are <a href="https://github.com/GoogleContainerTools/kaniko#pushing-to-amazon-ecr">Kaniko&rsquo;s instructions for pushing to AWS ECR</a>.</p>
+
+<p>Another approach for securely using Kaniko with EKS and ECR is to use worker node IAM roles with an instance group dedicated to Kaniko/CD.</p>
+
+<p><a href="https://aws.amazon.com/blogs/opensource/using-pod-security-policies-amazon-eks-clusters/">Using Pod Security Policies with EKS.</a></p>
+
+<h4 id="kaniko-with-azure-aks-and-acr">Kaniko with Azure, AKS and ACR<a href="#kaniko-with-azure-aks-and-acr" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
+
+<p>At the time of this post, Kaniko does not have official support for the Azure Container Registry (ACR) - but that doesn&rsquo;t mean it isn&rsquo;t possible. There is an <a href="https://github.com/GoogleContainerTools/kaniko/issues/425">open issue</a> in the Kaniko GitHub repository that includes some tips on pushing container images to the ACR from Kaniko.</p>
+
+<p><a href="https://docs.microsoft.com/en-us/azure/aks/use-pod-security-policies">Using Pod Security Policies with AKS.</a></p>
+
+<h4 id="kaniko-the-easy-way">Kaniko the Easy Way<a href="#kaniko-the-easy-way" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
+
+<p>Jenkins X allows you to <a href="https://jenkins-x.io/getting-started/create-cluster/#the-jx-create-cluster-gke-process">enable Kaniko as the default way to build and push container images</a> for all of your Jenkins X CD jobs and will be automatically configured to push to the default container registry of the cloud where you install Jenkins X and Kaniko caching is automatically set up for you - resulting in fast, secure container image builds that are pushed to your default Jenkins X container registry.</p>
+
+<p><strong>Important:</strong> Jenkins X does not have OOTB support for Pod Security Policies as tracked by <a href="https://github.com/jenkins-x/jx/issues/1074">this GitHub issue</a>. In my next post we will take a look at using Pod Security Policies with Jenkins X - but not just for Kaniko, because once you enable Pod Security Policy every K8s <code>Role</code>/<code>ClusterRole</code> has to have a Pod Security Policy associated to it.</p>
+
+<h4 id="drawbacks-for-kaniko">Drawbacks for Kaniko<a href="#drawbacks-for-kaniko" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
+
+<ul>
+<li>Requires running the Kaniko container as <code>ROOT</code> to execute most container builds</li>
+<li>Doesn&rsquo;t work with all <code>Dockerfiles</code> but keeps improving</li>
+<li>Is slightly more complicated to setup than the good old <code>docker build</code></li>
+</ul>
+
+<h2 id="other-security-vectors-you-should-cover">Other Security Vectors You Should Cover<a href="#other-security-vectors-you-should-cover" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
+
+<p>Enforce use of specific container registries - for example don’t allow pulling from or pushing to a public container registry like DockerHub. You should maintain your own container images and container registries - to include having at least two different container registries - one for CD container images (along with intermediate application container images) and another container registry for production approved application container images. I would actually take this a step further and have a third container registry that is a sandbox of sorts that allows CD specific container images and intermediate application container images that haven&rsquo;t been approved for more secure environments - like production - but are allowed to run in less secure test environments.</p>
+
+<p>Scan your container images before you make them available for use. Here is <a href="https://cb-technologists.github.io/posts/cloudbees-cross-team-and-dev-sec-ops/">a blog post of using Anchore with a Jenkins Pipeline</a> - super simple to set-up so there really is no reason not to scan your container images and use the scan as a gate for promotion to more secure container registries.</p>
+
+<h2 id="other-solutions">Other Solutions<a href="#other-solutions" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
+
+<p>Other solutions that allow you to build and push container images using a Kubernetes Pod based container and that don&rsquo;t rely on the Docker daemon:</p>
+
+<ul>
+<li><a href="https://github.com/genuinetools/img">img</a>: <strong>img</strong> is only at version 0.5.7 (May 3, 2019 release), but this project is promising. <strong>img</strong> required <a href="https://github.com/genuinetools/img#upstream-patches">upstream patches</a> to different projects that should eventually make it the most secure (and fast) way to build and push container images from a K8s Pod container.</li>
+<li><a href="https://github.com/GoogleContainerTools/jib">jib</a> - Another Google project, <strong>jib</strong> supports building and pushing container images without the Docker daemon.
+
+<ul>
+<li><strong>jib</strong> only supports building container images for Java applications with Maven and Gradle support.</li>
+</ul></li>
+</ul>
+
+<p>If you aren&rsquo;t already, start building your container images with Kaniko on Kubernetes - with Pod Security Policies. And again, if you want to get Kaniko up and running quickly and easily then you should checkout Jenkins X. Jenkins X will automatically set up Kaniko, along with the necessary configuration to push container images to the Docker registry of your choice (GCR, ECR, Docker Hub, etc). You can go from a Dockerfile in GitHub to container image in your registry in minutes with Jenkins X.</p>
+
+
+
+
+
+  
+
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.css" integrity="sha256-sCl5PUOGMLfFYctzDW3MtRib0ctyUvI9Qsmq2wXOeBY=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/default-skin/default-skin.min.css" integrity="sha256-BFeI1V+Vh1Rk37wswuOYn5lsTcaU96hGaI7OUVCLjPc=" crossorigin="anonymous" />
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+</div>
+    </div>
+  </section>
+
+  
+<section class="section">
+  <div class="container">
+    <aside><div id="disqus_thread"></div></aside>
+    <script type="text/javascript">
+      var disqus_shortname = 'kurtmadel-com';
+      (function() {
+        
+        if (window.location.hostname == "localhost")
+            return;
+        
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+      <section class="section">
+      <div class="container has-text-centered">
+        <p>© 2019 Kurt Madel All Rights Reserved</p>
+      </div>
+    </section>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+    
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    <script src="/js/load-photoswipe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.js" integrity="sha256-UplRCs9v4KXVJvVY+p+RSo5Q4ilAUXh7kpjyIP5odyc=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe-ui-default.min.js" integrity="sha256-PWHOlUzc96pMc8ThwRIXPn8yH4NOLu42RQ0b9SpnpFk=" crossorigin="anonymous"></script>
+    
+  </body>
+</html>
+
+ 
