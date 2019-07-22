@@ -7,7 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2019 Kurt Madel All Rights Reserved</copyright>
-    <lastBuildDate>Tue, 02 Jul 2019 08:09:15 -0400</lastBuildDate>
+    <lastBuildDate>Mon, 22 Jul 2019 08:09:15 -0400</lastBuildDate>
     
 	<atom:link href="https://kurtmadel.com/tags/ci/index.xml" rel="self" type="application/rss+xml" />
     
@@ -15,7 +15,7 @@
     <item>
       <title>Securely Building Container Images on Kubernetes</title>
       <link>https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/building-container-images-with-kubernetes/</link>
-      <pubDate>Tue, 02 Jul 2019 08:09:15 -0400</pubDate>
+      <pubDate>Mon, 22 Jul 2019 08:09:15 -0400</pubDate>
       
       <guid>https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/building-container-images-with-kubernetes/</guid>
       <description>Back in 2013, before Kubernetes was a thing, Docker was making Linux containers (LXC) much more accessible and use of Docker based containers took off (and Docker quickly dropped LXC as the default execution engine for their own container runtime). At the same time continuous integration (CI) was rapidly maturing as a best practice and a necessity for efficient software delivery. The use of Docker containers with CI was quickly adopted as the best way to manage CI tools - compilers, testing tools, security scans, etc.</description>
