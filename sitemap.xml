@@ -3,6 +3,82 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://kurtmadel.com/tags/dostoevsky/</loc>
+    <lastmod>2019-07-28T07:40:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/series/incoherent-thoughts-of-a-young-marine/</loc>
+    <lastmod>2019-07-28T07:40:15-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/</loc>
+    <lastmod>2019-07-28T07:40:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/posts/</loc>
+    <lastmod>2019-07-28T07:40:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/posts/incoherent-thoughts-of-a-young-marine/9-11-93-part-two/</loc>
+    <lastmod>2019-07-28T07:40:15-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/series/</loc>
+    <lastmod>2019-07-28T07:40:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/</loc>
+    <lastmod>2019-07-28T07:40:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/usmc/</loc>
+    <lastmod>2019-07-28T07:40:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/books/</loc>
+    <lastmod>2019-07-28T07:40:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/madness/</loc>
+    <lastmod>2019-07-28T07:40:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/modesty/</loc>
+    <lastmod>2019-07-28T07:40:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/movie-review/</loc>
+    <lastmod>2019-07-28T07:40:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://kurtmadel.com/tags/ramblings/</loc>
+    <lastmod>2019-07-28T07:40:15-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://kurtmadel.com/tags/cd/</loc>
     <lastmod>2019-07-22T08:09:15-04:00</lastmod>
     <priority>0</priority>
@@ -27,37 +103,13 @@
   </url>
   
   <url>
-    <loc>https://kurtmadel.com/</loc>
-    <lastmod>2019-07-22T08:09:15-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://kurtmadel.com/series/native-kubernetes-continuous-delivery/</loc>
     <lastmod>2019-07-22T08:09:15-04:00</lastmod>
   </url>
   
   <url>
-    <loc>https://kurtmadel.com/posts/</loc>
-    <lastmod>2019-07-22T08:09:15-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/building-container-images-with-kubernetes/</loc>
     <lastmod>2019-07-22T08:09:15-04:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://kurtmadel.com/series/</loc>
-    <lastmod>2019-07-22T08:09:15-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://kurtmadel.com/tags/</loc>
-    <lastmod>2019-07-22T08:09:15-04:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -135,19 +187,8 @@
   </url>
   
   <url>
-    <loc>https://kurtmadel.com/series/incoherent-thoughts-of-a-young-marine/</loc>
-    <lastmod>2019-03-13T09:32:15-04:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://kurtmadel.com/posts/incoherent-thoughts-of-a-young-marine/9-26-93/</loc>
     <lastmod>2019-03-13T09:32:15-04:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://kurtmadel.com/tags/usmc/</loc>
-    <lastmod>2019-03-13T09:32:15-04:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -163,12 +204,6 @@
   </url>
   
   <url>
-    <loc>https://kurtmadel.com/tags/ramblings/</loc>
-    <lastmod>2019-03-13T09:32:15-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://kurtmadel.com/tags/john-irving/</loc>
     <lastmod>2019-01-21T22:45:15-04:00</lastmod>
     <priority>0</priority>
@@ -177,18 +212,6 @@
   <url>
     <loc>https://kurtmadel.com/posts/incoherent-thoughts-of-a-young-marine/9-11-93/</loc>
     <lastmod>2019-01-21T22:45:15-04:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://kurtmadel.com/tags/books/</loc>
-    <lastmod>2019-01-21T22:45:15-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://kurtmadel.com/tags/movie-review/</loc>
-    <lastmod>2019-01-21T22:45:15-04:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
