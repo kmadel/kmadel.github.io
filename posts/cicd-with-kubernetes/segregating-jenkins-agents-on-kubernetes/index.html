@@ -99,252 +99,200 @@ if (!doNotTrack) {
 </div>
 
       
-      <div class="content">
-
-<p>This is the first part in the series <a href="/series/cicd-on-kubernetes/">CI/CD on Kubernetes</a>. In this part we will explore the use of Kubernetes <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/"><code>Namespaces</code></a> and the Kubernetes <a href="https://kubernetes.io/docs/admin/admission-controllers/#podnodeselector"><code>PodNodeSelector</code></a> <a href="https://kubernetes.io/docs/admin/admission-controllers/">Admission Controller</a> to segregate Jenkins agent workloads from the Jenkins server (or master) workloads - as well as other workloads on the Kubernetes cluster. As we continue on with the series we will see why this will serve as an important foundation for managing Kubernetes configuration for Jenkins agent related features such as autoscaling, resource quotas and security constraints.</p>
-
+      <div class="content"><p>This is the first part in the series <a href="/series/cicd-on-kubernetes/">CI/CD on Kubernetes</a>. In this part we will explore the use of Kubernetes <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/"><code>Namespaces</code></a> and the Kubernetes <a href="https://kubernetes.io/docs/admin/admission-controllers/#podnodeselector"><code>PodNodeSelector</code></a> <a href="https://kubernetes.io/docs/admin/admission-controllers/">Admission Controller</a> to segregate Jenkins agent workloads from the Jenkins server (or master) workloads - as well as other workloads on the Kubernetes cluster. As we continue on with the series we will see why this will serve as an important foundation for managing Kubernetes configuration for Jenkins agent related features such as autoscaling, resource quotas and security constraints.</p>
 <blockquote>
 <p><strong>NOTE:</strong> The configuration examples used in this series are from a Kubernetes cluster deployed in AWS using <a href="https://github.com/kubernetes/kops">Kubernetes Operations or kops</a> version <a href="https://github.com/kubernetes/kops/blob/master/docs/releases/1.9-NOTES.md">1.9</a> with <a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/">Kubernetes RBAC</a> enabled (which is the default authorization mode for kops 1.9). Therefore, certains steps and aspects of the configurations presented may be different for other Kuberenetes platforms.</p>
 </blockquote>
-
 <h2 id="why-segregate">Why Segregate<a href="#why-segregate" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
-
-<p>It is considered a best practice with Jenkins to have a <a href="https://jenkins.io/doc/book/architecting-for-scale/#distributed-builds-architecture">distributed workload</a> where the majority of your CI/CD workload is distributed across a pool of agents. Many CI/CD automation tools have a similar concept as Jenkins in distibuting much of the workload to <em>agents</em> running separately from the CI/CD server or <strong><em>master</em></strong> ; so this will most likely apply even if you aren&rsquo;t using Jenkins for CI/CD. Of course it is also considered a best practice to have multiple Jenkins masters for a large organization, but having multiple Jenkins agents is absolutely critical to long-term successful CI/CD for organizations of any size. Whereas a Jenkins master is typically a long-lived and stateful application - a pet if you will, we want Jenkins agents that are dynamic and ephemeral - cattle. Kubernetes is a perfect platform to manage your herd of agents - specifically with the <a href="https://github.com/jenkinsci/kubernetes-plugin">Jenkins Kubernetes plugin</a>, so we will not only have a pool of agents, but we will have a dynamic pool where agents are created on-demand and destroyed after they are used. However, we also want to ensure that this dynamic agent workload does not negatively impact our Jenkins masters. We will accomplish that by segregating the two workloads. Kubernetes provides a number of capabilities that will allow us to achieve this segregation.</p>
-
+<p>It is considered a best practice with Jenkins to have a <a href="https://jenkins.io/doc/book/architecting-for-scale/#distributed-builds-architecture">distributed workload</a> where the majority of your CI/CD workload is distributed across a pool of agents. Many CI/CD automation tools have a similar concept as Jenkins in distibuting much of the workload to <em>agents</em> running separately from the CI/CD server or <em><strong>master</strong></em> ; so this will most likely apply even if you aren&rsquo;t using Jenkins for CI/CD. Of course it is also considered a best practice to have multiple Jenkins masters for a large organization, but having multiple Jenkins agents is absolutely critical to long-term successful CI/CD for organizations of any size. Whereas a Jenkins master is typically a long-lived and stateful application - a pet if you will, we want Jenkins agents that are dynamic and ephemeral - cattle. Kubernetes is a perfect platform to manage your herd of agents - specifically with the <a href="https://github.com/jenkinsci/kubernetes-plugin">Jenkins Kubernetes plugin</a>, so we will not only have a pool of agents, but we will have a dynamic pool where agents are created on-demand and destroyed after they are used. However, we also want to ensure that this dynamic agent workload does not negatively impact our Jenkins masters. We will accomplish that by segregating the two workloads. Kubernetes provides a number of capabilities that will allow us to achieve this segregation.</p>
 <h2 id="namespaces-and-node-pools">Namespaces and Node Pools<a href="#namespaces-and-node-pools" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
-
 <p>Kubernetes provides <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/"><code>Namespaces</code></a> to allow the segregation of  Kubernetes objects within the same cluster. Additionally, many Kubernetes solutions have a concept of <code>node pools</code>. A <code>node pool</code> is a group of Kubernetes <code>nodes</code> with the same characteristics - such as the same instance type. Kops refers to <code>node pools</code> as <a href="https://github.com/kubernetes/kops/blob/master/docs/instance_groups.md"><code>InstanceGroups</code></a> and for AWS they are backed by AWS Autoscaling Groups (ASG) where all the <code>nodes</code> in an <code>InstanceGroup</code> would be of the same EC2 instance type in addition to other defined characteristics. Kops provides the ability to create as many <code>node pools</code> (or <code>InstanceGroups</code>) as makes sense for your cluster - as does the Google Kubernetes Engine (GKE). To achieve the segregation between Jenkins masters and agents, we are going to create separate <code>Namespaces</code> and <code>node pools</code> that are individually specific to Jenkins masters and agents. This will result in all Jenkins agent <code>Pods</code> being on agent dedicated <code>nodes</code> and being isolated from <code>nodes</code> with Jenkins masters or other workloads on your Kubernetes cluster.</p>
-
 <p>The following diagram illustrates the use of two <code>namespaces</code> and two <code>InstanceGroups</code> for Jenkins masters and agents:
-<figure>
-    <img src="k8s-cluster-node-selector.png"/> <figcaption>
+<figure><img src="k8s-cluster-node-selector.png"/><figcaption>
             <h4>Kubernetes Jenkins Agent Segregation Diagram</h4>
         </figcaption>
 </figure>
 </p>
-
 <blockquote>
 <p><strong>NOTE:</strong> As of the date of this post, the Azure Kubernetes Service (AKS) does not support multiple node pools - <a href="https://github.com/Azure/AKS/issues/287">per this GitHub issue it is on their roadmap</a>.</p>
 </blockquote>
-
 <h2 id="configure-kops-admission-controllers">Kubernetes Admission Controllers<a href="#configure-kops-admission-controllers" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
-
 <p>To achieve segregation for the Jenkins agent workload to a specific <code>node pool</code>/<code>InstanceGroup</code>, we turn to <a href="https://kubernetes.io/docs/admin/admission-controllers/#what-are-they">Kubernetes Admission Controllers</a>. Even if you don’t know what the Kubernetes Admission Controllers are or do, chances are that you have benefited from them if you have ever interacted with a Kubernetes cluster. For example, if you use a default <code>StorageClass</code> or a <code>ServiceAccount</code> then you are depending on an Admission Controller. In this case, we are going to utilize the <a href="https://kubernetes.io/docs/admin/admission-controllers/#podnodeselector"><code>PodNodeSelector</code> Admisssion Controller</a>. But first, we have to enable it for our cluster. For the version of kops used for this post - <code>1.9.3</code> - the following Admission Controllers are enabled by default (as you can see in the code for kops 1.9 <a href="https://github.com/kubernetes/kops/blob/release-1.9/pkg/model/components/apiserver.go#L227">here</a> that is based on a <a href="https://kubernetes.io/docs/admin/admission-controllers/#is-there-a-recommended-set-of-admission-controllers-to-use">recommended set of admission controllers</a>):</p>
-
-<pre><code class="language-yaml">    - Initializers
-    - NamespaceLifecycle
-    - LimitRanger
-    - ServiceAccount
-    - PersistentVolumeLabel
-    - DefaultStorageClass
-    - DefaultTolerationSeconds
-    - MutatingAdmissionWebhook
-    - ValidatingAdmissionWebhook
-    - NodeRestriction
-    - ResourceQuota
-</code></pre>
-
-<p>So we need to add <code>PodNodeSelector</code>. For <strong>kops</strong> you can do that by using the <code>kops edit cluster</code> command. If you don&rsquo;t already have a configuration section for the <code>kubeAPIServer</code> then you will first want to run <code>kops get cluster --full -o=yaml</code>, then you can copy the <code>kubeAPIServer</code> section and just add it to your existing configuration (of course some of your values may differ):</p>
-
-<pre><code class="language-yaml">apiVersion: kops/v1alpha2
-kind: Cluster
-metadata:
-  creationTimestamp: 2018-05-24T01:06:51Z
-  name: k8s.kurtmadel.com
-spec:
-  api:
-...
-  iam:
-    allowContainerRegistry: true
-    legacy: false
-  kubeAPIServer:
-    address: 127.0.0.1
-    admissionControl:
-    - Initializers
-    - NamespaceLifecycle
-    - LimitRanger
-    - ServiceAccount
-    - PersistentVolumeLabel
-    - DefaultStorageClass
-    - DefaultTolerationSeconds
-    - NodeRestriction
-    - ResourceQuota
-    - PodNodeSelector
-    allowPrivileged: true
-    anonymousAuth: false
-    apiServerCount: 1
-    authorizationMode: RBAC
-    cloudProvider: aws
-    etcdServers:
-    - http://127.0.0.1:4001
-    etcdServersOverrides:
-    - /events#http://127.0.0.1:4002
-    image: gcr.io/google_containers/kube-apiserver:v1.9.3
-    insecurePort: 8080
-    kubeletPreferredAddressTypes:
-    - InternalIP
-    - Hostname
-    - ExternalIP
-    logLevel: 2
-    requestheaderAllowedNames:
-    - aggregator
-    requestheaderExtraHeaderPrefixes:
-    - X-Remote-Extra-
-    requestheaderGroupHeaders:
-    - X-Remote-Group
-    requestheaderUsernameHeaders:
-    - X-Remote-User
-    runtimeConfig:
-      scheduling.k8s.io/v1alpha1: &quot;true&quot;
-    securePort: 443
-    serviceClusterIPRange: 100.64.0.0/13
-    storageBackend: etcd2
-  kubeScheduler:
-  ...
-</code></pre>
-
-<p>If you already have a configuration entry for the <code>kubeAPIServer</code> then just add <code>PodNodeSelector</code> to the end of the <code>admissionControl</code> list. Once you have saved the changes you will need to update your cluster - for kops: <code>kops update cluster --yes</code>. If this is an existing cluster then you will also have to perform a rolling-update: <code>kops rolling-update cluster --yes</code>.</p>
-
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>    - <span style="color:#ae81ff">Initializers</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">NamespaceLifecycle</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">LimitRanger</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">ServiceAccount</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">PersistentVolumeLabel</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">DefaultStorageClass</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">DefaultTolerationSeconds</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">MutatingAdmissionWebhook</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">ValidatingAdmissionWebhook</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">NodeRestriction</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">ResourceQuota</span>
+</span></span></code></pre></div><p>So we need to add <code>PodNodeSelector</code>. For <strong>kops</strong> you can do that by using the <code>kops edit cluster</code> command. If you don&rsquo;t already have a configuration section for the <code>kubeAPIServer</code> then you will first want to run <code>kops get cluster --full -o=yaml</code>, then you can copy the <code>kubeAPIServer</code> section and just add it to your existing configuration (of course some of your values may differ):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">kops/v1alpha2</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Cluster</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">creationTimestamp</span>: <span style="color:#e6db74">2018-05-24T01:06:51Z</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">k8s.kurtmadel.com</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">api</span>:
+</span></span><span style="display:flex;"><span>...
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">iam</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">allowContainerRegistry</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">legacy</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">kubeAPIServer</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">address</span>: <span style="color:#ae81ff">127.0.0.1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">admissionControl</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">Initializers</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">NamespaceLifecycle</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">LimitRanger</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">ServiceAccount</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">PersistentVolumeLabel</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">DefaultStorageClass</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">DefaultTolerationSeconds</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">NodeRestriction</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">ResourceQuota</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">PodNodeSelector</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">allowPrivileged</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">anonymousAuth</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">apiServerCount</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">authorizationMode</span>: <span style="color:#ae81ff">RBAC</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">cloudProvider</span>: <span style="color:#ae81ff">aws</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">etcdServers</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">http://127.0.0.1:4001</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">etcdServersOverrides</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">/events#http://127.0.0.1:4002</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">gcr.io/google_containers/kube-apiserver:v1.9.3</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">insecurePort</span>: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kubeletPreferredAddressTypes</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">InternalIP</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">Hostname</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">ExternalIP</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">logLevel</span>: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">requestheaderAllowedNames</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">aggregator</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">requestheaderExtraHeaderPrefixes</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">X-Remote-Extra-</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">requestheaderGroupHeaders</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">X-Remote-Group</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">requestheaderUsernameHeaders</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">X-Remote-User</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">runtimeConfig</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">scheduling.k8s.io/v1alpha1</span>: <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">securePort</span>: <span style="color:#ae81ff">443</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">serviceClusterIPRange</span>: <span style="color:#ae81ff">100.64.0.0</span><span style="color:#ae81ff">/13</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">storageBackend</span>: <span style="color:#ae81ff">etcd2</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">kubeScheduler</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">...</span>
+</span></span></code></pre></div><p>If you already have a configuration entry for the <code>kubeAPIServer</code> then just add <code>PodNodeSelector</code> to the end of the <code>admissionControl</code> list. Once you have saved the changes you will need to update your cluster - for kops: <code>kops update cluster --yes</code>. If this is an existing cluster then you will also have to perform a rolling-update: <code>kops rolling-update cluster --yes</code>.</p>
 <blockquote>
 <p><strong>NOTE:</strong> If you are enabling additional admission controllers on a new cluster you should do it before you apply the configuration or a rolling-update of all of your cluster nodes will be required.</p>
 </blockquote>
-
 <h2 id="putting-it-all-together">Putting It All Together<a href="#putting-it-all-together" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
-
 <p>So now that we have the <code>PodNodeSelector</code> admission controller enabled we can create the <code>node pools</code> and <code>namespaces</code>.</p>
-
 <h4 id="node-pools">Node Pools<a href="#node-pools" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
-
 <p>We will create two <code>node pools</code> - one for Jenkins masters and one for Jenkins agents.</p>
-
 <h6 id="jenkins-master-node-pool">Jenkins Master Node Pool<a href="#jenkins-master-node-pool" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h6>
-
 <p>Create the <code>node pool</code> for Jenkins masters with <code>kops create ig jenkins-masters</code> and add <code>jenkinsType: master</code> as an additional <code>nodeLabel</code>. It should look similar to the following when you are done:</p>
-
-<pre><code class="language-yaml">apiVersion: kops/v1alpha2
-kind: InstanceGroup
-metadata:
-  creationTimestamp: 2018-05-25T11:28:57Z
-  labels:
-    kops.k8s.io/cluster: k8s.kurtmadel.com
-  name: agentnodes
-spec:
-  image: kope.io/k8s-1.8-debian-stretch-amd64-hvm-ebs-2018-02-08
-  machineType: m5.xlarge
-  maxSize: 2
-  minSize: 2
-  nodeLabels:
-    jenkinsType: masters
-    kops.k8s.io/instancegroup: jenkins-masters
-  role: Node
-  subnets:
-  - us-east-1b
-</code></pre>
-
-<h6 id="jenkins-agent-instance-group">Jenkins Agent Node Pool<a href="#jenkins-agent-instance-group" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h6>
-
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">kops/v1alpha2</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">InstanceGroup</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">creationTimestamp</span>: <span style="color:#e6db74">2018-05-25T11:28:57Z</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kops.k8s.io/cluster</span>: <span style="color:#ae81ff">k8s.kurtmadel.com</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">agentnodes</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">image</span>: <span style="color:#ae81ff">kope.io/k8s-1.8-debian-stretch-amd64-hvm-ebs-2018-02-08</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">machineType</span>: <span style="color:#ae81ff">m5.xlarge</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">maxSize</span>: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">minSize</span>: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">nodeLabels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">jenkinsType</span>: <span style="color:#ae81ff">masters</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kops.k8s.io/instancegroup</span>: <span style="color:#ae81ff">jenkins-masters</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">role</span>: <span style="color:#ae81ff">Node</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">subnets</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">us-east-1b</span>
+</span></span></code></pre></div><h6 id="jenkins-agent-instance-group">Jenkins Agent Node Pool<a href="#jenkins-agent-instance-group" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h6>
 <p>Next we will create the <code>node pool</code> for Jenkins agents with <code>kops create ig jenkins-agents</code> and add <code>jenkinsType: agent</code> as an additional <code>nodeLabel</code>. It should look similar to the following when you are done:</p>
-
-<pre><code class="language-yaml">apiVersion: kops/v1alpha2
-kind: InstanceGroup
-metadata:
-  creationTimestamp: 2018-05-25T11:30:23Z
-  labels:
-    kops.k8s.io/cluster: k8s.kurtmadel.com
-  name: agentnodes
-spec:
-  image: kope.io/k8s-1.8-debian-stretch-amd64-hvm-ebs-2018-02-08
-  machineType: m5.xlarge
-  maxSize: 4
-  minSize: 4
-  nodeLabels:
-    jenkinsType: agents
-    kops.k8s.io/instancegroup: jenkins-agents
-  role: Node
-  subnets:
-  - us-east-1b
-</code></pre>
-
-<p>And because we are using kops <code>InstanceGroups</code> - any time we add additional nodes to either <code>node pool</code> it will automatically have the <code>jenkinsType</code> <code>node label</code> applied.</p>
-
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">kops/v1alpha2</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">InstanceGroup</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">creationTimestamp</span>: <span style="color:#e6db74">2018-05-25T11:30:23Z</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kops.k8s.io/cluster</span>: <span style="color:#ae81ff">k8s.kurtmadel.com</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">agentnodes</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">image</span>: <span style="color:#ae81ff">kope.io/k8s-1.8-debian-stretch-amd64-hvm-ebs-2018-02-08</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">machineType</span>: <span style="color:#ae81ff">m5.xlarge</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">maxSize</span>: <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">minSize</span>: <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">nodeLabels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">jenkinsType</span>: <span style="color:#ae81ff">agents</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kops.k8s.io/instancegroup</span>: <span style="color:#ae81ff">jenkins-agents</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">role</span>: <span style="color:#ae81ff">Node</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">subnets</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">us-east-1b</span>
+</span></span></code></pre></div><p>And because we are using kops <code>InstanceGroups</code> - any time we add additional nodes to either <code>node pool</code> it will automatically have the <code>jenkinsType</code> <code>node label</code> applied.</p>
 <h4 id="namespace">Namespace<a href="#namespace" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
-
 <p>Next we will create two <code>namespaces</code>. Again, one for Jenkins masters and one for Jenkins agents.</p>
-
 <p>First we will create a <code>namespace</code> for our Jenkins masters:</p>
-
-<pre><code class="language-yaml">apiVersion: v1
-kind: Namespace
-metadata:
-  annotations:
-      scheduler.alpha.kubernetes.io/node-selector: jenkinsType=master
-  name: jenkins-masters
-</code></pre>
-
-<p>Next we will create a <code>namespace</code> for our Jenkins agents:</p>
-
-<pre><code class="language-yaml">apiVersion: v1
-kind: Namespace
-metadata:
-  annotations:
-      scheduler.alpha.kubernetes.io/node-selector: jenkinsType=agent
-  name: jenkins-agents
-</code></pre>
-
-<p>The <code>scheduler.alpha.kubernetes.io/node-selector</code> annotation is used by the <code>PodNodeSelector</code> admission controller to assign default <code>NodeSelectors</code> based on the <code>namespaces</code> where a <code>pod</code> is created. This results in all <code>pods</code> being created in the <code>jenkins-agents</code> <code>namespace</code> landing on <code>nodes</code> in the <code>jenkins-agents</code> <code>node pool</code> and being segregated from Jenkins masters.</p>
-
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Namespace</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">scheduler.alpha.kubernetes.io/node-selector</span>: <span style="color:#ae81ff">jenkinsType=master</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">jenkins-masters</span>
+</span></span></code></pre></div><p>Next we will create a <code>namespace</code> for our Jenkins agents:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Namespace</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">scheduler.alpha.kubernetes.io/node-selector</span>: <span style="color:#ae81ff">jenkinsType=agent</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">jenkins-agents</span>
+</span></span></code></pre></div><p>The <code>scheduler.alpha.kubernetes.io/node-selector</code> annotation is used by the <code>PodNodeSelector</code> admission controller to assign default <code>NodeSelectors</code> based on the <code>namespaces</code> where a <code>pod</code> is created. This results in all <code>pods</code> being created in the <code>jenkins-agents</code> <code>namespace</code> landing on <code>nodes</code> in the <code>jenkins-agents</code> <code>node pool</code> and being segregated from Jenkins masters.</p>
 <blockquote>
 <p><strong>NOTE:</strong> The <code>PodNodeSelector</code> also has a file based configuration that allows you to not only specficy default <code>NodeSelector</code> labels for specific <code>namespaces</code> but also allows specifying a <code>clusterDefaultNodeSelector</code>. However, I have not yet figured out how to use this file based configuration with kops - so if you have any ideas on this, please comment below. There is a <a href="https://github.com/kubernetes/kops/issues/5170">GitHub issue tracking this</a>.</p>
 </blockquote>
-
 <h2 id="jenkins-kubernetes-plugin-configuration">Jenkins Kubernetes Plugin Configuration<a href="#jenkins-kubernetes-plugin-configuration" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
-
 <p>So now that we have <code>node pools</code> and <code>namespaces</code> for our Jenkins masters and agents we need to configure the Kubernetes plugin to use the <code>jenkins-agents</code> <code>namespace</code>. To start with, we must create a <code>ServiceAccount</code> in the <code>jenkins-masters</code> <code>namespace</code> as the requests for new dyanmic agent <code>pods</code> will be initiated by our Jenkins master running in the same Kubernetes cluster. For clarity, I will specify the <code>namespace</code> in the configuration and will use the <code>ServiceAccount</code> name <code>jenkins</code>.</p>
-
-<pre><code class="language-yaml">---
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: jenkins
-  namespace: jenkins-masters
-</code></pre>
-
-<p>Now we need to create a Kubernetes <code>role</code> to allow the <code>jenkins</code> <code>ServiceAccount</code> to create, use and delete <code>pods</code>, excute commands in <code>pods</code> and access <code>pod</code> logs in the <code>jenkins-agents</code> <code>namespace</code> based on the <a href="https://github.com/jenkinsci/kubernetes-plugin/blob/master/src/main/kubernetes/service-account.yml">example provided in the Jenkins Kubernetes project</a>.</p>
-
-<pre><code class="language-yaml">kind: Role
-apiVersion: rbac.authorization.k8s.io/v1beta1
-metadata:
-  name: jenkins-agents
-rules:
-- apiGroups: [&quot;&quot;]
-  resources: [&quot;pods&quot;]
-  verbs: [&quot;create&quot;,&quot;delete&quot;,&quot;get&quot;,&quot;list&quot;,&quot;patch&quot;,&quot;update&quot;,&quot;watch&quot;]
-- apiGroups: [&quot;&quot;]
-  resources: [&quot;pods/exec&quot;]
-  verbs: [&quot;create&quot;,&quot;delete&quot;,&quot;get&quot;,&quot;list&quot;,&quot;patch&quot;,&quot;update&quot;,&quot;watch&quot;]
-- apiGroups: [&quot;&quot;]
-  resources: [&quot;pods/log&quot;]
-  verbs: [&quot;get&quot;,&quot;list&quot;,&quot;watch&quot;]
-
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: RoleBinding
-metadata:
-  name: jenkins-agents
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: pods-all
-subjects:
-- kind: ServiceAccount
-  name: jenkins
-  namespace: jenkins-masters
-</code></pre>
-
-<p>The primary difference between the example provided in the link above and the above configuration is the use of the <code>namespace</code> for the <code>RoleBinding</code> <code>subjects</code>.</p>
-
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ServiceAccount</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">jenkins</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">jenkins-masters</span>
+</span></span></code></pre></div><p>Now we need to create a Kubernetes <code>role</code> to allow the <code>jenkins</code> <code>ServiceAccount</code> to create, use and delete <code>pods</code>, excute commands in <code>pods</code> and access <code>pod</code> logs in the <code>jenkins-agents</code> <code>namespace</code> based on the <a href="https://github.com/jenkinsci/kubernetes-plugin/blob/master/src/main/kubernetes/service-account.yml">example provided in the Jenkins Kubernetes project</a>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Role</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io/v1beta1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">jenkins-agents</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">apiGroups</span>: [<span style="color:#e6db74">&#34;&#34;</span>]
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">resources</span>: [<span style="color:#e6db74">&#34;pods&#34;</span>]
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">verbs</span>: [<span style="color:#e6db74">&#34;create&#34;</span>,<span style="color:#e6db74">&#34;delete&#34;</span>,<span style="color:#e6db74">&#34;get&#34;</span>,<span style="color:#e6db74">&#34;list&#34;</span>,<span style="color:#e6db74">&#34;patch&#34;</span>,<span style="color:#e6db74">&#34;update&#34;</span>,<span style="color:#e6db74">&#34;watch&#34;</span>]
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">apiGroups</span>: [<span style="color:#e6db74">&#34;&#34;</span>]
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">resources</span>: [<span style="color:#e6db74">&#34;pods/exec&#34;</span>]
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">verbs</span>: [<span style="color:#e6db74">&#34;create&#34;</span>,<span style="color:#e6db74">&#34;delete&#34;</span>,<span style="color:#e6db74">&#34;get&#34;</span>,<span style="color:#e6db74">&#34;list&#34;</span>,<span style="color:#e6db74">&#34;patch&#34;</span>,<span style="color:#e6db74">&#34;update&#34;</span>,<span style="color:#e6db74">&#34;watch&#34;</span>]
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">apiGroups</span>: [<span style="color:#e6db74">&#34;&#34;</span>]
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">resources</span>: [<span style="color:#e6db74">&#34;pods/log&#34;</span>]
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">verbs</span>: [<span style="color:#e6db74">&#34;get&#34;</span>,<span style="color:#e6db74">&#34;list&#34;</span>,<span style="color:#e6db74">&#34;watch&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io/v1beta1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">RoleBinding</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">jenkins-agents</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">roleRef</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">apiGroup</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Role</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pods-all</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">subjects</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ServiceAccount</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">jenkins</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">jenkins-masters</span>
+</span></span></code></pre></div><p>The primary difference between the example provided in the link above and the above configuration is the use of the <code>namespace</code> for the <code>RoleBinding</code> <code>subjects</code>.</p>
 <p>Now you can use the <code>ServiceAccount</code> and <code>jenkins-agents</code> <code>namespace</code> we created with <a href="https://github.com/jenkinsci/kubernetes-plugin#running-in-google-container-engine-gke">these instructions</a> to configure the Kubernetes plugin for your Jenkins master and be assured that your distributed Jenkins agents will not negatively impact your Jenkins masters or any other workload you have running on your Kubernetes cluster.</p>
-
 <p>In the <a href="https://kurtmadel.com/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/">next post</a> of the series <a href="/series/cicd-on-kubernetes/">CI/CD on Kubernetes</a> we will explore autoscaling for the Jenkins agent workload.</p>
 </div>
     </div>

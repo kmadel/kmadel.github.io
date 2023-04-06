@@ -117,9 +117,7 @@ if (!doNotTrack) {
 </div>
 
       
-      <div class="content">
-
-<p>
+      <div class="content"><p>
 
 
 
@@ -178,19 +176,13 @@ if (!doNotTrack) {
     </div>
 </div>
 
-If you are doing CI and/or CD at scale and you aren&rsquo;t leveraging Native Kubernetes Continuous Delivery (Native K8s CD) then you are just <del>doing it wrong</del> <a href="../native-k8s-cd">missing out on a better way</a> - plain and simple. And if there is one Kubernetes project that has been at the forefront of Native K8s CD and best exemplifies the why and the how of what makes Kubernetes such an excellent platform for executing CI/CD at scale - it is Prow. <a href="https://github.com/kubernetes/test-infra/tree/master/prow">Prow</a> is a Native Kubernetes CI/CD system and as far as its name goes, Prow didn&rsquo;t go the Greek route for its K8s-themed name, rather it went the nautical route with <em>prow</em> meaning <strong><em>the portion of a ship&rsquo;s bow (the front end of a ship) above water</em></strong> - and Prow has been keeping K8s CI/CD above water for several years now. And others have taken notice, resulting in Prow becoming an important tool for a number of high-profile Kubernetes-centric projects. <a href="https://github.com/tektoncd/pipeline/blob/master/infra/prow/config.yaml">Prow</a> is an important tool in the toolbox of another Native K8s CD project called <a href="https://tekton.dev/">Tekton</a>, going the Greek route for its name which means carpenter, that I wrote about in a <a href="../tekton-standardizing-native-kubernetes-cd/">previous post of this Native K8s CD series</a>. Tekton, along with a number of other important K8s projects, use Prow for their own CI/CD automation even though there are a number of other options. So what exactly is Prow and why should you care? Before we dive into that, I believe it is important to understand the origin and evolution of Prow to provide additional insight into why K8s is such an excellent platform for CI/CD.</p>
-
+If you are doing CI and/or CD at scale and you aren&rsquo;t leveraging Native Kubernetes Continuous Delivery (Native K8s CD) then you are just <del>doing it wrong</del> <a href="../native-k8s-cd">missing out on a better way</a> - plain and simple. And if there is one Kubernetes project that has been at the forefront of Native K8s CD and best exemplifies the why and the how of what makes Kubernetes such an excellent platform for executing CI/CD at scale - it is Prow. <a href="https://github.com/kubernetes/test-infra/tree/master/prow">Prow</a> is a Native Kubernetes CI/CD system and as far as its name goes, Prow didn&rsquo;t go the Greek route for its K8s-themed name, rather it went the nautical route with <em>prow</em> meaning <em><strong>the portion of a ship&rsquo;s bow (the front end of a ship) above water</strong></em> - and Prow has been keeping K8s CI/CD above water for several years now. And others have taken notice, resulting in Prow becoming an important tool for a number of high-profile Kubernetes-centric projects. <a href="https://github.com/tektoncd/pipeline/blob/master/infra/prow/config.yaml">Prow</a> is an important tool in the toolbox of another Native K8s CD project called <a href="https://tekton.dev/">Tekton</a>, going the Greek route for its name which means carpenter, that I wrote about in a <a href="../tekton-standardizing-native-kubernetes-cd/">previous post of this Native K8s CD series</a>. Tekton, along with a number of other important K8s projects, use Prow for their own CI/CD automation even though there are a number of other options. So what exactly is Prow and why should you care? Before we dive into that, I believe it is important to understand the origin and evolution of Prow to provide additional insight into why K8s is such an excellent platform for CI/CD.</p>
 <h2 id="where-did-prow-come-from">Where did Prow come from?<a href="#where-did-prow-come-from" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
-
 <p>When it came to CI/CD and the creation of Prow, Kubernetes was scratching its own itch with a need to execute over 10,000 CI/CD jobs per day across over 100 repositories of code in several GitHub Organizations - and other tools just weren&rsquo;t getting the job done. So, the <a href="https://github.com/kubernetes/community/blob/master/sig-testing/README.md">Kubernetes Testing Special Interest Group (sig-testing)</a> created their own tools and services, to include Prow. Prow is currently part of the <a href="https://github.com/kubernetes/test-infra">Kubernetes test-infra project</a> and is one of several <a href="https://github.com/kubernetes/community/tree/master/sig-testing">Kubernetes Testing Special Interest Group (sig-testing)</a> top-level projects. At the time of this post, Prow was not even in its own GitHub repository, rather it was <a href="https://github.com/kubernetes/test-infra/tree/master/prow">just a sub-directory</a> (and previously named <a href="https://github.com/kubernetes/test-infra/pull/835">ciongke</a>)in the <em>kubernetes/test-infra</em> repository. And partly because of the importance of Prow to the K8s project as a whole and also because there is so much interest from other K8s related projects, Prow continues to add features and flourish. Another testament to Prows continued growth is how top-level <a href="https://github.com/kubernetes/test-infra"><strong>test-infra</strong></a> components continue to be replaced with Prow components - with one of the latest examples of this being <a href="https://github.com/kubernetes/test-infra/pull/11302">the replacement of Gubernator with Spyglass</a>.</p>
-
 <h2 id="what-is-prow">What is Prow?<a href="#what-is-prow" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
-
 <p>Prow is a lot - certainly more than I can cover in one post - but I will do my best. Prow&rsquo;s <a href="https://github.com/kubernetes/test-infra/blob/master/prow/README.md">GitHub README</a> describes it as a <em>system</em>, and a very complex multi-faceted system it is at that. Prow is built on a container based microservice architecture and consists of a number of single purpose components - many integrating with one another while others are more or less standalone. The Kubernetes Testing SIG describes Prow as <em>&ldquo;a CI/CD system built on Kubernetes for Kubernetes that executes jobs for building, testing, publishing and deploying.&rdquo;</em> However, that description does not highlight perhaps the most important inferred capability of Prow - a capability that is at the heart of <em>best-of-breed</em> CI/CD automation tools - that capability is automation that starts with code commits - and in the case of Prow it starts with a scalable stateless microservice called <a href="https://github.com/kubernetes/test-infra/blob/master/prow/cmd/README.md#core-components"><code>hook</code></a>that triggers native K8s CI/CD jobs (among a number of things that <code>hook</code> does via <a href="https://github.com/kubernetes/test-infra/tree/master/prow/plugins">plugins</a>). It is this GitHub automation capability that has been one of the key reasons why other K8s projects have adopted Prow for their own CI/CD. But Prow is more than just GitHub webhook automation and CI/CD job execution. Prow is also:</p>
-
 <ul>
 <li>Comprehensive GitHub Automation
-
 <ul>
 <li>ChatOps via <a href="https://prow.k8s.io/command-help">simple <code>/foo</code> commands</a></li>
 <li>Fine-grained GitHub policy and permission management via <a href="https://github.com/kubernetes/community/blob/master/contributors/guide/owners.md"><code>OWNERS</code> files</a></li>
@@ -202,7 +194,8 @@ If you are doing CI and/or CD at scale and you aren&rsquo;t leveraging Native Ku
 <li>GitHub release notes management - <a href="https://github.com/kubernetes/test-infra/tree/master/prow/plugins/releasenote"><code>releasenote</code></a></li>
 <li><a href="https://github.com/kubernetes/test-infra/blob/master/prow/scaling.md#github-api-cache">Scalable, cacheable</a></li>
 <li>GitHub <a href="https://github.com/kubernetes/test-infra/blob/master/prow/getting_started_deploy.md#bot-account">bot</a> with <a href="https://github.com/k8s-ci-robot">Prow&rsquo;s bot being an active GitHub user since 2016</a></li>
-</ul></li>
+</ul>
+</li>
 <li>Multi-engine CI/CD Job Execution - <a href="https://github.com/kubernetes/test-infra/tree/master/prow/cmd/plank"><code>plank</code></a></li>
 <li>CI/CD Reporting - <a href="https://github.com/kubernetes/test-infra/tree/master/prow/cmd/crier"><code>crier</code></a></li>
 <li>CI/CD Dashboards for viewing job history, merge status and more - <a href="https://github.com/kubernetes/test-infra/tree/master/prow/cmd/deck"><code>deck</code></a></li>
@@ -212,72 +205,46 @@ If you are doing CI and/or CD at scale and you aren&rsquo;t leveraging Native Ku
 <li>And I am sure I am still missing a bunch of things - like <a href="https://github.com/kubernetes/test-infra/tree/master/prow/plugins/cat"><code>cats</code></a>
 and <a href="https://github.com/kubernetes/test-infra/tree/master/prow/plugins/dog"><code>dogs</code></a></li>
 </ul>
-
 <h3 id="comprehensive-github-automation">Comprehensive GitHub Automation<a href="#comprehensive-github-automation" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
-
 <p><em>Prow is like steroids for GitHub automation.</em></p>
-
 <h4 id="prow-is-a-github-webhook-listener">Prow is a GitHub Webhook Listener<a href="#prow-is-a-github-webhook-listener" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
-
 <p>This may be one of the most important capabilities of Prow and most of Prow&rsquo;s other components depend on it in one way or another. Prow listens for GitHub webhooks via the <code>hook</code> component that in turn triggers one or more configured <a href="https://prow.k8s.io/plugins">plugins</a> to include the <a href="https://github.com/kubernetes/test-infra/tree/master/prow/plugins/trigger"><code>trigger</code> plugin</a> that triggers Native K8s CI/CD jobs for GitHub PR events, and the <code>/test</code> and <code>/retest</code> ChatOps commands.</p>
-
 <p>Many non-Native K8s CI/CD platforms support GitHub webhooks but in many cases they are not highly fault-tolerant, not horizontally scalable and not stateless - so they become a single-point-of-failure (SPoF) for GitHub webhooks. If a GitHub webhook is sent while such a platform is down it will be completely missed - so you might miss a merge to your deployment branch and miss a mission critical change that needs to be deployed to production.</p>
-
 <h4 id="prow-chatops">Prow ChatOps<a href="#prow-chatops" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
-
 <p>ChatOps are an important component of Prow&rsquo;s GitHub webhook support - Prow doesn&rsquo;t just listen for pushes to branches, but listens for a number of more sophisticated GitHub events, like comments on issues and PRs using ChatOps commands. Prow ChatOps allows you to do everything from approving a PR with the <a href="https://prow.k8s.io/command-help#approve"><code>/approve</code> command</a> to telling a <a href="https://prow.k8s.io/command-help#joke"><code>/joke</code></a>. Many of the <a href="https://prow.k8s.io/plugins">Prow <code>hook</code> plugins</a> provide ChatOps commands that streamline and automate repository contributors&rsquo; interactions with GitHub PRs and issues - so developers can focus more on the code and not GitHub process and UI. The <a href="https://prow.k8s.io/command-help">complete list of supported ChatOps commands</a> is available as <a href="https://prow.k8s.io/command-help">one of the views of the <code>deck</code> component</a>.</p>
-
 <h4 id="prow-provides-more-granular-directory-level-permissions-in-github">Prow Provides More Granular Directory Level Permissions in GitHub<a href="#prow-provides-more-granular-directory-level-permissions-in-github" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
-
 <p>Prow allows you to manage ownership/permissions at a more granular level than GitHub does. Prow allows you to create an <a href="https://github.com/kubernetes/community/blob/master/contributors/guide/owners.md"><code>OWNERS</code> file</a> at the repository level, but also within any repository sub-directory. This allows you to manage who can do what at the directory level instead of just the top-level repository level. The directory specific <code>OWNERS</code> files are utilized by a number of <code>hook</code> plugins and ChatOps commands - for example the <a href="https://github.com/kubernetes/test-infra/tree/master/prow/plugins/approve/approvers#blunderbuss-and-reviewers"><code>blunderbluss</code> plugin automatically assigns PR reviewers</a> based on <code>OWNERS</code> files most relevant to the file(s) being committed - but the automated reviewer selection is more sophisticated than just using the most relevant/closest <code>OWNERS</code> file - it also <a href="https://github.com/kubernetes/test-infra/tree/master/prow/plugins/approve/approvers#blunderbuss-selection-mechanism">weights reviewers based on the number of lines of code that changed and in what files</a> - once again highlighting the incredible breadth and depth of Prow&rsquo;s GitHub automation.</p>
-
 <h4 id="prow-is-automated-github-merges">Prow is Automated GitHub Merges<a href="#prow-is-automated-github-merges" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
-
 <p>Prow&rsquo;s <a href="https://github.com/kubernetes/test-infra/tree/master/prow/tide"><code>tide</code></a> component automates the bulk testing of PRs and automatically merges multiple PRs. It <a href="https://github.com/kubernetes/test-infra/commit/9d38f05fab58d5bf49921959dd36004db7cde6ac">replaced another <code>test-infra</code> top-level project called <code>mungegithub</code></a>. In addition to automated testing and merging of PRs - at scale, tide also provides Promethus metrics and serves live data to Deck - the Prow reporting dashboard.</p>
-
 <h4 id="prow-provides-github-organization-settings-and-team-membership-management">Prow Provides GitHub Organization Settings and Team Membership Management<a href="#prow-provides-github-organization-settings-and-team-membership-management" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
-
 <p>Prow allows you to manage GitHub Organization settings and team membership with Config-as-Code (CasC) so the source of truth for your Organization configuration is in one easily auditable file, rather than relying on one or more people making manual changes via the GitHub UI or manual API calls. The <a href="https://github.com/kubernetes/test-infra/tree/master/prow/cmd/peribolos"><code>peribolos</code> component</a> provides automated auditable support for managing these GitHub settings with a CasC <a href="https://github.com/kubernetes/org/blob/master/config/kubernetes/org.yaml"><code>org.yaml</code> file</a>.</p>
-
 <h4 id="prow-provides-github-project-management">Prow Provides GitHub Project Management<a href="#prow-provides-github-project-management" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h4>
-
 <p>Prow allows you to manage GitHub projects by assigning and/or moving GitHub issues/PRs to project columns. The <a href="https://github.com/kubernetes/test-infra/tree/master/prow/plugins/project"><code>project</code> plugin</a> provides the capability for you to add an issue or PR to a GitHub project board and column.</p>
-
 <h3 id="prow-provides-config-as-code-for-its-own-configuration">Prow Provides Config-as-Code for Its Own Configuration<a href="#prow-provides-config-as-code-for-its-own-configuration" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
-
 <p>Prow is stateless - storing its configuration in a K8s <code>ConfigMap</code> - but you don&rsquo;t have to manually create or update the Prow <code>ConfigMap</code>. Prow, of course, provides a way to automate its own configuration by creating the different configuration files in GitHub.
 Configuring Prow for your own GitHub Organization/Repository is based on a <a href="https://github.com/kubernetes/test-infra/blob/master/prow/config.yaml"><code>prow/config.yaml</code></a> file and you can use Prow itself to update it on PR merges.</p>
-
 <p>Prow provides components to manage its own configuration with GitHub - to include the ability to test configuration changes before you apply them. Create a new PR with configuration changes and it will trigger an automated configuration test. Merge the PR to the <code>master</code> branch and Prow will update its K8s <code>ConfigMap</code> to match the configuration in your GitHub repository.</p>
-
 <ul>
 <li><a href="https://github.com/kubernetes/test-infra/tree/master/prow/plugins/updateconfig"><code>updateconfig</code> plugin</a> allows Prow to update K8s <code>ConfigMaps</code> when Prow configuration files in a repository change.</li>
 <li><a href="https://github.com/kubernetes/test-infra/tree/master/prow/cmd/checkconfig"><code>checkconfig</code> component</a> loads the Prow configuration given with <code>--config-path</code>, <code>--job-config-path</code> and <code>--plugin-config</code> in order to validate it. Use <code>checkconfig</code> as a pre-submit for any repository holding Prow configuration to ensure that check-ins do not break anything.</li>
 <li><a href="https://github.com/kubernetes/test-infra/tree/master/prow/cmd/config-bootstrapper"><code>config-bootstrapper</code></a> is a component used to bootstrap a configuration that would be incrementally updated by the <code>updateconfig</code> plugin.</li>
 </ul>
-
-<h3 id="prow-is-a-ci-cd-job-executor">Prow is a CI/CD Job Executor<a href="#prow-is-a-ci-cd-job-executor" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
-
+<h3 id="prow-is-a-cicd-job-executor">Prow is a CI/CD Job Executor<a href="#prow-is-a-cicd-job-executor" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
 <p>Prow is very modular and triggers jobs of different types, triggered in different ways for different execution engines and provides dashboards to track job status, job artifacts and merge status among other things.</p>
-
-<p><p></p>
-
+<!-- raw HTML omitted -->
 <ul>
 <li>Job Types - specifies how the job is triggered.
-
 <ul>
 <li>presubmit - runs on unmerged PRs.</li>
 <li>postsubmit - runs on each new commit.</li>
 <li>periodic - runs on a time-basis, unrelated to git changes.</li>
 <li>batch - tests multiple unmerged PRs at the same time.</li>
-</ul></li>
 </ul>
-
-<p><p></p>
-
+</li>
+</ul>
+<!-- raw HTML omitted -->
 <ul>
 <li>Job States - specifies whether the job is running or not, the status of the job.
-
 <ul>
 <li>triggered - means the job has been created but is not yet scheduled.</li>
 <li>pending - means the job is scheduled but not yet running.</li>
@@ -285,30 +252,25 @@ Configuring Prow for your own GitHub Organization/Repository is based on a <a hr
 <li>failure - means the job completed with errors (exit non-zero).</li>
 <li>aborted - means that prow killed the job early (new commit pushed, perhaps).</li>
 <li>error - means the job could not schedule (bad config, perhaps).</li>
-</ul></li>
 </ul>
-
-<p><p></p>
-
+</li>
+</ul>
+<!-- raw HTML omitted -->
 <ul>
 <li>Execution Engines/Job Agents - specifies the controller (such as plank or jenkins-agent) that runs the job.
-
 <ul>
 <li>kubernetes - Prow will create a pod to run this job (default).</li>
 <li>jenkins - Prow will schedule the job on an external static Jenkins instance.</li>
 <li>knative-build - Prow will schedule the job via a <a href="https://github.com/kubernetes/test-infra/blob/master/prow/cmd/build/main.go">Knative build-crd resource</a>.</li>
 <li>tekton (<a href="https://github.com/kubernetes/test-infra/pull/11888">coming soon</a>) - Prow will schedule the job via a Tekton CRD based <a href="https://github.com/tektoncd/pipeline/blob/master/docs/pipelineruns.md">PipelineRun</a>.</li>
-</ul></li>
 </ul>
-
-<p><p></p>
-
+</li>
+</ul>
+<!-- raw HTML omitted -->
 <ul>
 <li>Reporting and Dashboards
-
 <ul>
 <li><a href="https://github.com/kubernetes/test-infra/tree/master/prow/cmd/deck">Deck</a> provides:
-
 <ul>
 <li><a href="https://prow.k8s.io/">A job status dashboard</a></li>
 <li><a href="https://prow.k8s.io/pr">PR status</a></li>
@@ -316,50 +278,45 @@ Configuring Prow for your own GitHub Organization/Repository is based on a <a hr
 <li><a href="https://prow.k8s.io/tide-history">PR merge history via Tide</a></li>
 <li><a href="https://prow.k8s.io/command-help">Prow ChatOps command reference</a></li>
 <li><a href="https://prow.k8s.io/plugins">Prow Plugin documentation</a></li>
-</ul></li>
+</ul>
+</li>
 <li><a href="https://github.com/kubernetes/test-infra/tree/master/prow/crier">Crier</a> detects changes to ProwJob CRDs and notifies configured clients to include:
-
 <ul>
 <li>GitHub status context</li>
 <li>Gerrit comment</li>
 <li>Pubsub message</li>
-</ul></li>
-<li>Artifact viewer with Spyglass</li>
-</ul></li>
 </ul>
-
+</li>
+<li>Artifact viewer with Spyglass</li>
+</ul>
+</li>
+</ul>
 <h3 id="who-is-using-prow">Who is using Prow?<a href="#who-is-using-prow" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
-
 <p>Prow provides a <a href="https://github.com/kubernetes/test-infra/tree/master/prow#prow-in-the-wild">list of other K8s organizations/projects using Prow</a>. But what is very interesting is the other Native K8s CD projects that leverage Prow for their own CI/CD:</p>
-
 <ul>
 <li>Knative - not only <a href="https://github.com/kubernetes/test-infra/tree/master/prow/cmd/build">provides one of the CI/CD job execution engines for Prow</a>, it also <a href="https://github.com/knative/test-infra/tree/master/ci/prow">uses Prow for its own CI</a>.</li>
 <li>Tekton - currently <a href="https://github.com/tektoncd/pipeline/tree/master/infra/prow">using Prow to build and test Tekton Pipeline</a>.</li>
 <li>Jenkins X - <a href="https://github.com/jenkins-x/prow-config">uses Prow for its own CI/CD</a>. But it also takes Prow usage to a whole other level by <a href="https://github.com/jenkins-x/jx/tree/master/pkg/prow">seamlessly integrating Prow with the original Serverless Jenkins X and now for Jenkins X with Tekton</a> - <a href="../jenkins-x-goes-native/">more about this in the next post</a>.</li>
 <li>Istio - the service mesh used by Knative to support continuous deployment (among others of course), <a href="https://github.com/istio/test-infra/pull/253">integrated Prow early on its existence</a>.</li>
 </ul>
-
-<h2 id="what-s-next">What&rsquo;s next?<a href="#what-s-next" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
-
+<h2 id="whats-next">What&rsquo;s next?<a href="#whats-next" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
 <p>So as you can see, and as I already mentioned above, Prow is a lot! And I definitely didn&rsquo;t discuss all of Prow&rsquo;s features in this post. But I would also like to share some things I would like to see next for Prow:</p>
-
 <ul>
 <li>I would like to see Prow become a top-level project/repository under kubernetes-sig GitHub Organization. See <a href="https://github.com/kubernetes/test-infra/issues/11782">https://github.com/kubernetes/test-infra/issues/11782</a> for some details.</li>
 <li>I would like to see support for other Git providers - BitBucket, GitHub Enterprise and even generic git support. See:
-
 <ul>
 <li><a href="https://github.com/kubernetes/test-infra/issues/10146">https://github.com/kubernetes/test-infra/issues/10146</a></li>
-</ul></li>
+</ul>
+</li>
 <li>I would like to see Prow support Tekton as a Prow agent type/execution engine. See:
-
 <ul>
 <li><a href="https://github.com/tektoncd/pipeline/issues/537">https://github.com/tektoncd/pipeline/issues/537</a></li>
 <li><a href="https://github.com/jenkins-x/test-infra/blob/pipeline5/prow/apis/prowjobs/v1/types.go#L76">https://github.com/jenkins-x/test-infra/blob/pipeline5/prow/apis/prowjobs/v1/types.go#L76</a></li>
-</ul></li>
+</ul>
+</li>
 <li>Prow originated as a Google engineering project as displayed by Prow&rsquo;s GCP slant. I would like to see better support for AWS and Azure.</li>
 <li>I would like to see Prow become a <a href="https://cd.foundation/">Continuous Delivery Foundation</a> project.</li>
 </ul>
-
 <p>Most of all, I want to see you keep your own CD above water <a href="(https://github.com/kubernetes/test-infra/blob/master/prow/getting_started_deploy.md)">by using Prow for your own GitHub automation</a>. But before you do that, you may want to wait for my <a href="../jenkins-x-goes-native/">next post in this series</a> where I will explain how effortless it can be for you to realize the advantages of Prow for your own application delivery by using Jenkins X for your CD.</p>
 </div>
     </div>

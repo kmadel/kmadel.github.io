@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>priority on Kurt Madel</title>
@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2019 Kurt Madel All Rights Reserved</copyright>
-    <lastBuildDate>Mon, 02 Jul 2018 07:23:00 -0400</lastBuildDate>
-    
-	<atom:link href="https://kurtmadel.com/tags/priority/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Mon, 02 Jul 2018 07:23:00 -0400</lastBuildDate><atom:link href="https://kurtmadel.com/tags/priority/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Just-in-Time Autoscaling for Jenkins Agents with Kubernetes</title>
       <link>https://kurtmadel.com/posts/cicd-with-kubernetes/just-in-time-autoscaling-for-jenkins-agents-with-kubernetes/</link>

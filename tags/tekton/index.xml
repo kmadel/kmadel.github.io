@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tekton on Kurt Madel</title>
@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2019 Kurt Madel All Rights Reserved</copyright>
-    <lastBuildDate>Mon, 06 May 2019 04:10:15 -0400</lastBuildDate>
-    
-	<atom:link href="https://kurtmadel.com/tags/tekton/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Mon, 06 May 2019 04:10:15 -0400</lastBuildDate><atom:link href="https://kurtmadel.com/tags/tekton/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Jenkins X Goes Native</title>
       <link>https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/jenkins-x-goes-native/</link>
@@ -37,8 +33,8 @@
       
       <guid>https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/native-k8s-cd/</guid>
       <description>Native Kubernetes Continuous Delivery (Native K8s CD) is, by definition, cloud native, so I wanted to start with the CNCF definition of cloud native:
- Cloud native technologies empower organizations to build and run scalable applications in modern, dynamic environments such as public, private, and hybrid clouds. Containers, service meshes, microservices, immutable infrastructure, and declarative APIs exemplify this approach.
-These techniques enable loosely coupled systems that are resilient, manageable, and observable.</description>
+Cloud native technologies empower organizations to build and run scalable applications in modern, dynamic environments such as public, private, and hybrid clouds. Containers, service meshes, microservices, immutable infrastructure, and declarative APIs exemplify this approach.
+These techniques enable loosely coupled systems that are resilient, manageable, and observable. Combined with robust automation, they allow engineers to make high-impact changes frequently and predictably with minimal toil.</description>
     </item>
     
     <item>

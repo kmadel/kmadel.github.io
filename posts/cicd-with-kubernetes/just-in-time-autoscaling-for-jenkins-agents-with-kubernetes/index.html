@@ -103,31 +103,20 @@ if (!doNotTrack) {
 </div>
 
       
-      <div class="content">
-
-<p>In <a href="https://kurtmadel.com/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/">Part 2</a> of the series <a href="/series/cicd-on-kubernetes/">CI/CD on Kubernetes</a> we set up cluster autoscaling for a <a href="https://kurtmadel.com/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/">dedicated Jenkins agent <code>node pool</code></a> by utilizing the <code>PodNodeSelector</code> and <code>LimitRanger</code> admission controllers. In Part 3 of this CI/CD on Kubernetes series we will take advantage of another <a href="https://kubernetes.io/docs/admin/admission-controllers/">admission controller</a> to scale-up the Jenkins agents <code>node pool</code> before a new request for a Jenkins agent <code>pod</code> requires the additional capacity. In other words, we want to initiate <strong>scaling-up</strong> of the Jenkins agent <code>node pool</code> before it is actually needed. This will minimize queueing of Jenkins jobs - resulting in faster CI/CD. I referred to this concept in the title of this post as <em>Just-in-Time Autoscaling</em>, a more realistic description may be <strong>preemptive autoscaling</strong>. <strong>Preemptive</strong> because we will use <a href="https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/"><strong>priority and preemption</strong></a>  Kubernetes scheduling to allow for overprovisioning of lower priority pods that will be <strong>preempted</strong> to make room for Jenkins agent <code>pod</code> requests - resulting in scaling-up before we need the additional node capacity for Jenkins agents while still having the immediate required capacity for the Jenkins agent <code>pod</code> request(s) that triggered the preemptive up-scale. <strong>Preemptive</strong> autoscaling will help avoid, or at least minimize, the amount of time that any Jenkins job spends in the Jenkins build queue waiting for agents, but still use only the amount of infrastructure needed at any given time - although there are a few caveats to this that we will explore in this post.</p>
-
+      <div class="content"><p>In <a href="https://kurtmadel.com/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/">Part 2</a> of the series <a href="/series/cicd-on-kubernetes/">CI/CD on Kubernetes</a> we set up cluster autoscaling for a <a href="https://kurtmadel.com/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/">dedicated Jenkins agent <code>node pool</code></a> by utilizing the <code>PodNodeSelector</code> and <code>LimitRanger</code> admission controllers. In Part 3 of this CI/CD on Kubernetes series we will take advantage of another <a href="https://kubernetes.io/docs/admin/admission-controllers/">admission controller</a> to scale-up the Jenkins agents <code>node pool</code> before a new request for a Jenkins agent <code>pod</code> requires the additional capacity. In other words, we want to initiate <strong>scaling-up</strong> of the Jenkins agent <code>node pool</code> before it is actually needed. This will minimize queueing of Jenkins jobs - resulting in faster CI/CD. I referred to this concept in the title of this post as <em>Just-in-Time Autoscaling</em>, a more realistic description may be <strong>preemptive autoscaling</strong>. <strong>Preemptive</strong> because we will use <a href="https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/"><strong>priority and preemption</strong></a>  Kubernetes scheduling to allow for overprovisioning of lower priority pods that will be <strong>preempted</strong> to make room for Jenkins agent <code>pod</code> requests - resulting in scaling-up before we need the additional node capacity for Jenkins agents while still having the immediate required capacity for the Jenkins agent <code>pod</code> request(s) that triggered the preemptive up-scale. <strong>Preemptive</strong> autoscaling will help avoid, or at least minimize, the amount of time that any Jenkins job spends in the Jenkins build queue waiting for agents, but still use only the amount of infrastructure needed at any given time - although there are a few caveats to this that we will explore in this post.</p>
 <h2 id="preemptive-autoscaling-with-priority">Preemptive Autoscaling with Priority<a href="#preemptive-autoscaling-with-priority" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
-
 <p>The solution for <strong>Just-in-Time</strong> or preemptive autoscaling presented in this post depends on the <a href="https://kubernetes.io/docs/admin/admission-controllers/#priority"><strong>Priority</strong></a> admission controller.</p>
-
 <blockquote>
 <p><strong>NOTE:</strong> The <a href="https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/">Priority admission controller</a> has been <strong>alpha</strong> since Kuberentes 1.8, and is <strong>beta</strong> and <strong>enabled by default</strong> for Kubernetes <strong>1.11</strong>.</p>
 </blockquote>
-
 <p>The <strong>Priority</strong> admission controller allows you to add <code>priorityClassName</code> meta-data to a <code>pod</code> on creation and prioritize the scheduling of the <code>pods</code> in the cluster based on the lower or higher priority of other <code>pods</code>. When high priority <code>pods</code> are requested in a cluster with the Priority admission controller enabled and there are not enough <code>node</code> resources to accomodate them - the Kubernetes scheduler will evict lower priority <code>pods</code> to make room for pending, higher priority <code>pods</code>. Coupling priority and preemption with the Cluster Autoscaler provides premeptive up-scaling - as lower priority <code>pods</code> are <strong>preempted</strong> to make room for higher priority <code>pods</code>. This results in the Cluster Autoscaler initiating a scale-up to make room for the evicted low priority <code>pods</code>. These <strong>low priority</strong> <code>pods</code> that we want to be preempted for a Jenkins agent <code>pod</code> request don&rsquo;t need to do anything except request a certain amount of cluster resources (cpu and memory) and must have a lower priority than the Jenkins agent <code>pods</code>. Therefore we will utilize special containers called <strong>pause containers</strong> (<a href="https://www.ianlewis.org/en/almighty-pause-container">read more about pause containers</a>) to create <code>pods</code> with the sole purpose of consuming a certain amounut of cpu and memory resources to enable a preemptive scale-up of the Jenkins agent <code>node pool</code> when a Jenkins agent <code>pod</code> is requested. We will create a <code>Deployment</code> of low priority <code>pods</code> using <em>pause containers</em> and with resource quotas and replicas configured and sized appropriately to accomodate one or more Jenkins agent <code>pods</code> in this example environment.</p>
-
 <h3 id="enabling-the-priority-admission-controller">Enabling the Priority Admission Controller<a href="#enabling-the-priority-admission-controller" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
-
 <p>In <a href="https://kurtmadel.com/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/">part one</a> of this series we saw how to enable an admission controller with kops. The Priority admission controllers will be slightly more involved.</p>
-
 <blockquote>
 <p><strong>NOTE:</strong> Although we will be using kops for the examples in this post, it is worth mentioning that at the time this was published, Azure&rsquo;s AKS and Amazon&rsquo;s EKS did not enable or provide a way to enable the Priority Admission Controller - hopefully it is enabled by default once AKS and EKS adopt Kubernetes 1.11. GKE has <a href="https://cloudplatform.googleblog.com/2018/02/get-the-most-out-of-Google-Kubernetes-Engine-with-Priority-and-Preemption.html">support for the Priority Admission Controller</a>, but it is only available on <a href="https://cloud.google.com/kubernetes-engine/docs/concepts/alpha-clusters">alpha clusters</a> at the time of this post.</p>
 </blockquote>
-
 <p>In addition to adding the <code>Priority</code> admission controller to the the <code>kubeAPIServer</code> <code>admissionControl</code> list like we did for <code>PodNodeSelector</code> in the first post, we also have to set the <code>PodPriority</code> feature gate to <code>true</code> for the <code>kubeAPIServer</code>, <code>kubeScheduler</code> and <code>kubelet</code>. Once againe we will use the <code>kops edit cluster</code> command to make the changes to the cluster.</p>
-
-<pre><code> ...
+<pre tabindex="0"><code> ...
  kubeAPIServer:
     address: 127.0.0.1
     admissionControl:
@@ -145,168 +134,117 @@ if (!doNotTrack) {
     allowPrivileged: true
 ...
     featureGates:
-      PodPriority: &quot;true&quot;
+      PodPriority: &#34;true&#34;
     image: gcr.io/google_containers/kube-apiserver:v1.9.3
     insecurePort: 8080
 ...
   kubeScheduler:
     featureGates:
-      PodPriority: &quot;true&quot;
+      PodPriority: &#34;true&#34;
   kubelet:
     featureGates:
-      PodPriority: &quot;true&quot;
+      PodPriority: &#34;true&#34;
 ...
-</code></pre>
-
-<p>Once you have saved the changes you will need to update your cluster - for kops: <code>kops update cluster --yes</code>. If this is an existing cluster then you will also have to perform a rolling-update: <code>kops rolling-update cluster --yes</code>.</p>
-
+</code></pre><p>Once you have saved the changes you will need to update your cluster - for kops: <code>kops update cluster --yes</code>. If this is an existing cluster then you will also have to perform a rolling-update: <code>kops rolling-update cluster --yes</code>.</p>
 <blockquote>
 <p><strong>NOTE:</strong> If you are enabling additional admission controllers on a new cluster you should do it before you apply the configuration or a rolling-update of all of your cluster nodes will be required.</p>
 </blockquote>
-
 <h3 id="priority-classes">Priority Classes<a href="#priority-classes" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
-
 <p>Now that we have enabled the <code>Priority</code> admission controller and <code>PodPriority</code> <code>featureGates</code>, we will create two <code>PriorityClasses</code>. One being utilized as a default for all <code>pods</code> that don&rsquo;t specify a <code>PriorityClass</code> (all of the Jenkins agent <code>pods</code>) and the other <code>PriorityClass</code> for the overprovisioned low priority preemptible <code>pods</code>.</p>
-
 <blockquote>
 <p><strong>NOTE:</strong> If you don&rsquo;t specify a <code>globalDefault</code> <code>PriorityClass</code> then any <code>pod</code> that does not specify a <code>priorityClassName</code> will be assigned a priority value of 0.</p>
 </blockquote>
-
-<figure>
-  <figcaption>
-      <h6>defaultPriorityClass.yml</h6>
-  </figcaption>
-  
-```yaml
-apiVersion: scheduling.k8s.io/v1alpha1
-kind: PriorityClass
-metadata:
-  name: default-priority
-value: 1
-globalDefault: true
-description: "Default PriorityClass for pods that don't specificy a PriorityClass."
-```
-
-</figure>
-Note the setting of `globalDefault` to `true`.
-
-<figure>
-  <figcaption>
-      <h6>overprovisioningPriorityClass.yml</h6>
-  </figcaption>
-  
-```yaml
-apiVersion: scheduling.k8s.io/v1alpha1
-kind: PriorityClass
-metadata:
-  name: overprovisioning
-value: -1
-globalDefault: false
-description: "Priority class used by overprovisioning."
-```
-
-</figure>
-### Size Matters
-A key element of **Just-in-Time** autoscaling is that when an overprovisioned `pod` is preempted it leaves enough `cpu` and `memory` resources so that a Jenkins agent `pod` is able to be scheduled on that `node` immediately. To figure out the optimum size for the *overprovisoned preemptible pod(s)* we need to look at both the *instance types* selected for the Jenkins agent `node pool` and the `LimitRange` applied to `pods` and `containers` for Jenkins agent `pods`. We set a `machineType` of `m5.xlarge` for the Jenkins agent `node pool` in the [first part of this series](https://kurtmadel.com/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/#jenkins-agent-instance-group). An `m5.xlarge` has *4 vCPU* and *16Gib of memory*. Next we have to account for `LimitRanges` and in the second part of this series [we set **Limit Ranges**](https://kurtmadel.com/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/#limit-ranges) for the `pods` and `containers` in the Jenkins agent `node pool`. We set the minimum `cpu` to *0.25* and minimum `memory` to *500Mi*, and the maximum `cpu` to *2* and the maximum `memory` to *4Gi* for `containers`. The maximum for an entire `pod` (sum of all `containers` in a `pod`) was set to *3* `cpu` and *8Gi* `memory`.
-
-Now that we know the amount of `cpu` and `memory` that is available for a Jenkins agent `node` and the `LimitRange` for Jenkins agent `pods` we can figure out the sizing for the **overprovisoned preemptible `pod(s)`** `Deployment`. For this example we want to configure the `Deployment` so that there is preemptible capacity for either two Jenkins agent `pods` with two `containers` using the default limits for a total of 1 `cpu` and 2Gi `memory` **OR** one Jenkins agent `pod` where the default JNLP `container` uses the default limits and the second job specific `container` (for example maven) uses max limits for a total of 2.25 `cpu` and 4.5Gi `memory`. We also want to ensure that the overprovisioning `Deployment` is able to be scheduled on one `node` so that the Jenkins agent `node pool` is able to be scaled down to one `node` when there are no Jenkins agent requests.
-###### Overprovisioning Deployment
-Now that we have figured out the `cpu` and `memory` requests based on the `cpu` and `memory` availale on a Jenkins agent `node` and the `LimitRange` for Jenkins agent `pods`, we will create a `Deployment` for the preemptible `pods` utilizing the special **pause** containers mentioned above.
-<figure>
-  <figcaption>
-      <h6>overprovisioningDeployment.yml</h6>
-  </figcaption>
-  
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: overprovisioning
-  namespace: jenkins-agents
-spec:
-  replicas: 5
-  selector:
-    matchLabels:
-      run: overprovisioning
-  template:
-    metadata:
-      labels:
-        run: overprovisioning
-    spec:
-      priorityClassName: overprovisioning
-      containers:
-      - name: reserve-resources
-        image: k8s.gcr.io/pause
-        resources:
-          requests:
-            cpu: "0.5"
-            memory: "1Gi"
-```
-
-</figure>
-With 5 `replicas` and the above `cpu` and `memory` request for the *pause* `container` the `Deployment` will have a total footprint of *2.5* `cpu` and *5Gi* of `memory` - easily fitting on one Jenkins agent `node` as specified for this example environment. Furthermore, by using multiple `replicas` we will increase the likelihood of having enough capacity on any up-scaled `node` for the largest possible Jenkins agent `pod` with *3* `cpu` and *8Gi* of `memory`.
-### Update the Cluster Autoscaler Deployment
-Finally, to make all of this work, we need to make a minor change to the [`clusterAutoscalerDeployment.yml` from part two](https://kurtmadel.com/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/#cluster-autoscaler-deployment). By default, the Cluster Autoscaler will kill any pods with a `priority` less than *0* when scaling down and won't initiate scale-up for these pods. However, this behavior can be overridden by setting the [`expendable-pods-priority-cutoff`](https://github.com/kubernetes/autoscaler/blob/3d07f9c450f1ce66f8f0b25769c0114dcf2ba88d/cluster-autoscaler/main.go#L149) flag to *-1* in this case, to match the **overprovisioning**  `PriorityClass` created above. Once those changes are applied to the Cluster Autoscaler `Deployment` we will have **Just-in-Time** autoscaling for our Jenkins agents. We just need to update the `command` section of the [configuration from the last post](https://kurtmadel.com/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/#cluster-autoscaler-deployment) with the `expendable-pods-priority-cutoff` flag and apply the change:
-<figure>
-  <figcaption>
-      <h6>clusterJustInTimeAutoscalerDeployment.yml</h6>
-  </figcaption>
-  
-```yaml
-          command:
-            - ./cluster-autoscaler
-            - --v=4
-            - --stderrthreshold=info
-            - --cloud-provider=aws
-            - --skip-nodes-with-local-storage=false
-            - --nodes=2:10:agentnodes.k8s.kurtmadel.com
-            - --expendable-pods-priority-cutoff=-1
-```
-
-</figure>
-
+<!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">scheduling.k8s.io/v1alpha1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PriorityClass</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">default-priority</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">value</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">globalDefault</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">description</span>: <span style="color:#e6db74">&#34;Default PriorityClass for pods that don&#39;t specify a PriorityClass.&#34;</span>
+</span></span></code></pre></div><!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">scheduling.k8s.io/v1alpha1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PriorityClass</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">overprovisioning</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">value</span>: -<span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">globalDefault</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">description</span>: <span style="color:#e6db74">&#34;Priority class used by overprovisioning.&#34;</span>
+</span></span></code></pre></div><!-- raw HTML omitted -->
+<h3 id="size-matters">Size Matters<a href="#size-matters" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+<p>A key element of <strong>Just-in-Time</strong> autoscaling is that when an overprovisioned <code>pod</code> is preempted it leaves enough <code>cpu</code> and <code>memory</code> resources so that a Jenkins agent <code>pod</code> is able to be scheduled on that <code>node</code> immediately. To figure out the optimum size for the <em>overprovisoned preemptible pod(s)</em> we need to look at both the <em>instance types</em> selected for the Jenkins agent <code>node pool</code> and the <code>LimitRange</code> applied to <code>pods</code> and <code>containers</code> for Jenkins agent <code>pods</code>. We set a <code>machineType</code> of <code>m5.xlarge</code> for the Jenkins agent <code>node pool</code> in the <a href="https://kurtmadel.com/posts/cicd-with-kubernetes/segregating-jenkins-agents-on-kubernetes/#jenkins-agent-instance-group">first part of this series</a>. An <code>m5.xlarge</code> has <em>4 vCPU</em> and <em>16Gib of memory</em>. Next we have to account for <code>LimitRanges</code> and in the second part of this series <a href="https://kurtmadel.com/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/#limit-ranges">we set <strong>Limit Ranges</strong></a> for the <code>pods</code> and <code>containers</code> in the Jenkins agent <code>node pool</code>. We set the minimum <code>cpu</code> to <em>0.25</em> and minimum <code>memory</code> to <em>500Mi</em>, and the maximum <code>cpu</code> to <em>2</em> and the maximum <code>memory</code> to <em>4Gi</em> for <code>containers</code>. The maximum for an entire <code>pod</code> (sum of all <code>containers</code> in a <code>pod</code>) was set to <em>3</em> <code>cpu</code> and <em>8Gi</em> <code>memory</code>.</p>
+<p>Now that we know the amount of <code>cpu</code> and <code>memory</code> that is available for a Jenkins agent <code>node</code> and the <code>LimitRange</code> for Jenkins agent <code>pods</code> we can figure out the sizing for the <strong>overprovisoned preemptible <code>pod(s)</code></strong> <code>Deployment</code>. For this example we want to configure the <code>Deployment</code> so that there is preemptible capacity for either two Jenkins agent <code>pods</code> with two <code>containers</code> using the default limits for a total of 1 <code>cpu</code> and 2Gi <code>memory</code> <strong>OR</strong> one Jenkins agent <code>pod</code> where the default JNLP <code>container</code> uses the default limits and the second job specific <code>container</code> (for example maven) uses max limits for a total of 2.25 <code>cpu</code> and 4.5Gi <code>memory</code>. We also want to ensure that the overprovisioning <code>Deployment</code> is able to be scheduled on one <code>node</code> so that the Jenkins agent <code>node pool</code> is able to be scaled down to one <code>node</code> when there are no Jenkins agent requests.</p>
+<h6 id="overprovisioning-deployment">Overprovisioning Deployment<a href="#overprovisioning-deployment" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h6>
+<p>Now that we have figured out the <code>cpu</code> and <code>memory</code> requests based on the <code>cpu</code> and <code>memory</code> availale on a Jenkins agent <code>node</code> and the <code>LimitRange</code> for Jenkins agent <code>pods</code>, we will create a <code>Deployment</code> for the preemptible <code>pods</code> utilizing the special <strong>pause</strong> containers mentioned above.</p>
+<!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">overprovisioning</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">jenkins-agents</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">run</span>: <span style="color:#ae81ff">overprovisioning</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">run</span>: <span style="color:#ae81ff">overprovisioning</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">priorityClassName</span>: <span style="color:#ae81ff">overprovisioning</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">reserve-resources</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">image</span>: <span style="color:#ae81ff">k8s.gcr.io/pause</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">requests</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">cpu</span>: <span style="color:#e6db74">&#34;0.5&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">memory</span>: <span style="color:#e6db74">&#34;1Gi&#34;</span>
+</span></span></code></pre></div><!-- raw HTML omitted -->
+<p>With 5 <code>replicas</code> and the above <code>cpu</code> and <code>memory</code> request for the <em>pause</em> <code>container</code> the <code>Deployment</code> will have a total footprint of <em>2.5</em> <code>cpu</code> and <em>5Gi</em> of <code>memory</code> - easily fitting on one Jenkins agent <code>node</code> as specified for this example environment. Furthermore, by using multiple <code>replicas</code> we will increase the likelihood of having enough capacity on any up-scaled <code>node</code> for the largest possible Jenkins agent <code>pod</code> with <em>3</em> <code>cpu</code> and <em>8Gi</em> of <code>memory</code>.</p>
+<h3 id="update-the-cluster-autoscaler-deployment">Update the Cluster Autoscaler Deployment<a href="#update-the-cluster-autoscaler-deployment" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
+<p>Finally, to make all of this work, we need to make a minor change to the <a href="https://kurtmadel.com/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/#cluster-autoscaler-deployment"><code>clusterAutoscalerDeployment.yml</code> from part two</a>. By default, the Cluster Autoscaler will kill any pods with a <code>priority</code> less than <em>0</em> when scaling down and won&rsquo;t initiate scale-up for these pods. However, this behavior can be overridden by setting the <a href="https://github.com/kubernetes/autoscaler/blob/3d07f9c450f1ce66f8f0b25769c0114dcf2ba88d/cluster-autoscaler/main.go#L149"><code>expendable-pods-priority-cutoff</code></a> flag to <em>-1</em> in this case, to match the <strong>overprovisioning</strong>  <code>PriorityClass</code> created above. Once those changes are applied to the Cluster Autoscaler <code>Deployment</code> we will have <strong>Just-in-Time</strong> autoscaling for our Jenkins agents. We just need to update the <code>command</code> section of the <a href="https://kurtmadel.com/posts/cicd-with-kubernetes/autoscaling-jenkins-agents-with-kubernetes/#cluster-autoscaler-deployment">configuration from the last post</a> with the <code>expendable-pods-priority-cutoff</code> flag and apply the change:</p>
+<!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>          <span style="color:#f92672">command</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">./cluster-autoscaler</span>
+</span></span><span style="display:flex;"><span>            - --<span style="color:#ae81ff">v=4</span>
+</span></span><span style="display:flex;"><span>            - --<span style="color:#ae81ff">stderrthreshold=info</span>
+</span></span><span style="display:flex;"><span>            - --<span style="color:#ae81ff">cloud-provider=aws</span>
+</span></span><span style="display:flex;"><span>            - --<span style="color:#ae81ff">skip-nodes-with-local-storage=false</span>
+</span></span><span style="display:flex;"><span>            - --<span style="color:#ae81ff">nodes=2:10:agentnodes.k8s.kurtmadel.com</span>
+</span></span><span style="display:flex;"><span>            - --<span style="color:#ae81ff">expendable-pods-priority-cutoff=-1</span>
+</span></span></code></pre></div><!-- raw HTML omitted -->
 <p>The following diagrams illustrate four distinct phases of <strong>Just-in-Time</strong> autoscaling.</p>
-
-<p><strong>1. Initial setup:</strong> <figure>
-    <img src="k8s-preemptive-cluster-autoscaling-initial.png"/> <figcaption>
+<p><strong>1. Initial setup:</strong> <figure><img src="k8s-preemptive-cluster-autoscaling-initial.png"/><figcaption>
             <h4>Kubernetes Just-in-Time Autoscaling - Initial Overprovisioned Pod</h4>
         </figcaption>
 </figure>
 
-<strong>2. A full capacity node:</strong>  <figure>
-    <img src="k8s-preemptive-cluster-autoscaling-first-agent.png"/> <figcaption>
+<strong>2. A full capacity node:</strong>  <figure><img src="k8s-preemptive-cluster-autoscaling-first-agent.png"/><figcaption>
             <h4>Kubernetes Just-in-Time Autoscaling - Full Capacity Node</h4>
         </figcaption>
 </figure>
 
-<strong>3. The overprovisoned preemptible pod is preempted for another Jenkins agent <code>pod</code> and triggers an up-scale by the Cluster Autoscaler:</strong> <figure>
-    <img src="k8s-preemptive-cluster-autoscaling-upscale.png"/> <figcaption>
+<strong>3. The overprovisoned preemptible pod is preempted for another Jenkins agent <code>pod</code> and triggers an up-scale by the Cluster Autoscaler:</strong> <figure><img src="k8s-preemptive-cluster-autoscaling-upscale.png"/><figcaption>
             <h4>Kubernetes Just-in-Time Autoscaling - Preemption and Up-scaling</h4>
         </figcaption>
 </figure>
 
-<strong>4. By the time a third Jenkins agent <code>pod</code> is request there is a new node with available capacity - Just-in-Time:</strong> <figure>
-    <img src="k8s-preemptive-cluster-autoscaling-agent-three.png"/> <figcaption>
+<strong>4. By the time a third Jenkins agent <code>pod</code> is request there is a new node with available capacity - Just-in-Time:</strong> <figure><img src="k8s-preemptive-cluster-autoscaling-agent-three.png"/><figcaption>
             <h4>Kubernetes Just-in-Time Autoscaling - No wait for third agent</h4>
         </figcaption>
 </figure>
 </p>
-
 <blockquote>
 <p><strong>NOTE:</strong> Although GKE supports both autoscaling and priority/premption you are not able to modify the <code>expendable-pods-priority-cutoff</code> flag of the Cluster Autoscaler. To work around this you will have to utilize a <code>PriorityClass</code> value of <strong>0</strong> for overprovisiong - as that is the default value for the Cluster Autoscaler.</p>
 </blockquote>
-
 <h2 id="tradeoffs-between-speed-and-cost">Tradeoffs Between Speed and Cost<a href="#tradeoffs-between-speed-and-cost" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h2>
-
 <h3 id="under-utilized-nodes">Under Utilized Nodes<a href="#under-utilized-nodes" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
-
 <p>When there are no agent <code>pods</code> there will still be at least one un-utilized <code>node</code> for the <strong>overprovisoned preemptible pod(s)</strong>.
 Furthermore, when an up-scale is initiated - a Jenkins agent <code>pod</code> may never end up on the new node - that is, the Jenkins agent <code>pod(s)</code> that initiated an up-scale may complete their work and be removed before more additional agent capacity is needed on the new <code>node</code> and a down-scale occurs before the up-scaled <code>node</code> is utilized by any Jenkins workload. One way to reduce this is to modify the <strong>Cluster Autoscaler</strong> <code>scaleDownUnneededTime</code> flag - by default it is 10 minutes but something lower than that may be more suitable for your CI/CD environment and reduce under utilization of the agent <code>nodes</code>.</p>
-
 <h3 id="faster-ci-and-cd">Faster CI and CD<a href="#faster-ci-and-cd" class="hanchor" ariaLabel="Anchor"><svg class="icon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> </h3>
-
 <p>If you only look at cost from a cloud infrastructure point of view then under-utilized resources are definitely a big drawback of <strong>Just-in-Time</strong> autoscaling. But if you look at cost relative to the delivery of code to production and, more importantly, delivery of features to customers, then the increased speed may be well worth the additional infrastructure costs to support <strong>Just-in-Time</strong> autoscaling and faster CI/CD.</p>
-
 <p>Now that we have a robust autoscaling solution for our Jenkins agents in place it is time to change gears a bit and look at securing the Kubernetes cluster where these agents are running. In the next post of <a href="/series/cicd-on-kubernetes/">the series</a> we will look at <code>pod</code> security for the Jenkins agents and masters.</p>
 </div>
     </div>
